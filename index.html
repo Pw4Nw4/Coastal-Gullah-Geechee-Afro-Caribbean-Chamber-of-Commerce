@@ -9,7 +9,7 @@
 <link rel="icon" href="images/favicon-64.png" sizes="64x64" type="image/png">
 <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,500..900;1,500..800&family=Libre+Franklin:ital,wght@0,400..800;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=League+Spartan:wght@600..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -19,12 +19,36 @@
 <section class="hero" aria-labelledby="hero-title">
   <div class="wrap">
     <div class="hero-copy">
+      <p class="hero-kicker"><span>Chamber of Commerce</span> <span class="sep" aria-hidden="true">·</span> <span>Savannah &amp; the Georgia Coast</span></p>
       <h1 id="hero-title">Culture at the center. <em>Commerce</em> as the pathway forward.</h1>
       <p class="lead">Educating, empowering and advancing culturally rooted businesses across the Georgia Coast.</p>
-      <div id="hero-signup"></div>
-      <p class="hero-alt">Own a business or want to back one? <a class="more" href="membership.html">Become a member</a></p>
+      <div class="actions"><a class="btn" href="membership.html">Become a member</a><a class="btn btn-outline" href="directory.html">Find a member business</a></div>
     </div>
     <div class="medallion"><div class="disc"><img src="images/emblem-720.webp" width="720" height="720" fetchpriority="high" alt="The chamber emblem: a Sankofa bird beneath a rising sun, framed by palms, marsh grass and waves, over the words Educate, Empower, Economics."></div></div>
+  </div>
+  <svg class="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+    <path class="back" d="M0 52c120-26 240-30 360-12s240 46 360 40 240-46 360-50 240 26 360 30v60H0z"/>
+    <path class="mid" d="M0 78c140-22 260-20 390-2s250 34 370 26 250-40 370-40 220 22 310 28v30H0z"/>
+    <path class="front" d="M0 100c150-14 280-12 420 0s270 18 400 8 260-24 380-20 170 12 240 16v16H0z"/>
+  </svg>
+</section>
+
+<section class="newsbar" aria-labelledby="newsbar-title">
+  <div class="wrap">
+    <div><h2 id="newsbar-title">Get chamber news</h2><p>Events, grant leads and member spotlights, straight to your inbox.</p></div>
+    <div id="hero-signup"></div>
+  </div>
+</section>
+
+<section class="services" aria-labelledby="services-title">
+  <div class="wrap">
+    <h2 id="services-title" class="visually-hidden">How the chamber helps</h2>
+    <ul class="service-grid">
+      <li><a class="service teal" href="membership.html"><b>Join the chamber</b><span>Eight membership levels, from youngpreneurs to corporate partners.</span></a></li>
+      <li><a class="service gold" href="directory.html"><b>Member directory</b><span>Find and hire Gullah Geechee, Afro-Caribbean, minority- and women-owned businesses.</span></a></li>
+      <li><a class="service sepia" href="events.html"><b>Events &amp; networking</b><span>Mixers, workshops, ribbon cuttings and community markets.</span></a></li>
+      <li><a class="service navy" href="resources.html"><b>Grants &amp; resources</b><span>Funding leads, certification help and mentorship.</span></a></li>
+    </ul>
   </div>
 </section>
 
@@ -67,8 +91,8 @@
 <section aria-labelledby="events-title">
   <div class="wrap events-split">
     <div>
-      <h2 id="events-title">Gather with us</h2>
-      <p>Workshops, markets, clinics and celebrations, in Savannah and up and down the coast.</p>
+      <h2 id="events-title">Events &amp; networking</h2>
+      <p>Networking mixers, workshops, ribbon cuttings and community markets, in Savannah and up and down the coast.</p>
       <a class="more" href="events.html">All programs &amp; events</a>
     </div>
     <div>
@@ -88,9 +112,22 @@
 
 <section class="on-haint-soft" aria-labelledby="dir-title">
   <div class="wrap">
-    <div class="section-head"><div><h2 id="dir-title">Shop and hire local</h2><p>Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses across the coast.</p></div><a class="more" href="directory.html">Browse the directory</a></div>
+    <div class="section-head"><div><h2 id="dir-title">Member directory</h2><p>Shop and hire Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses across the coast.</p></div><a class="more" href="directory.html">Browse all members</a></div>
+    <form class="dir-search" action="directory.html" role="search">
+      <label for="home-q" class="visually-hidden">Search member businesses</label>
+      <input id="home-q" name="q" type="search" placeholder="Try “baskets” or “catering”">
+      <button class="btn btn-gold" type="submit">Search members</button>
+    </form>
     <p class="draft-note">Sample listings. Replace them in <code>MEMBERS</code> in <code>js/data.js</code>.</p>
     <ul id="home-dir" class="biz-grid" data-reveal="stagger"></ul>
+  </div>
+</section>
+
+<section aria-labelledby="partners-title">
+  <div class="wrap">
+    <div class="section-head"><div><h2 id="partners-title">Our partners</h2><p>Gold and Platinum partners investing in business on the Georgia Coast.</p></div><a class="more" href="membership.html#join">Become a partner</a></div>
+    <p class="draft-note">Add Gold and Platinum partners to <code>PARTNERS</code> in <code>js/data.js</code>. This section stays hidden until then.</p>
+    <ul id="partners" class="partners"></ul>
   </div>
 </section>
 
@@ -106,7 +143,7 @@
   <div class="wrap">
     <h2 id="motto-title"><span>Build business.</span> <em>Preserve culture.</em> <span>Strengthen legacy.</span></h2>
     <p class="lead">Your business belongs here: a directory listing, workshops, grant leads, advocacy and a community that has your back.</p>
-    <div class="actions"><a class="btn" href="membership.html">Join the chamber</a><a class="btn btn-outline" href="resources.html">Find grants &amp; resources</a></div>
+    <div class="actions"><a class="btn" href="membership.html">Join the chamber</a><a class="btn btn-outline" href="contact.html">Sponsor or partner with us</a></div>
   </div>
 </section>
 

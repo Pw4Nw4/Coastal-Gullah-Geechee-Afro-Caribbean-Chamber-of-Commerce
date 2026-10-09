@@ -4,6 +4,8 @@
 .env.*
 data
 node_modules
+# The mascot's React source; the site serves the prebuilt js/sankofa-mascot.js
+mascot
 *.md
 Dockerfile
 .dockerignore

@@ -11,7 +11,7 @@
 
   // ---------- Shared header / footer ----------
   const NAV = [
-    ["about.html", "About"], ["events.html", "Programs & Events"], ["directory.html", "Directory"],
+    ["about.html", "About"], ["events.html", "Programs & Events"], ["directory.html", "Member Directory"],
     ["resources.html", "Resources & Grants"], ["contact.html", "Contact"],
   ];
   const donate = isSet(SITE.donate) ? `<a href="${esc(SITE.donate)}">Donate</a>` : "";
@@ -28,7 +28,7 @@
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><span class="menu-icon" aria-hidden="true"></span><span class="menu-label">Menu</span></button>
       <nav class="main" id="nav" aria-label="Main"><ul>
         ${NAV.map(([h, t]) => `<li><a href="${h}"${h === page ? ' aria-current="page"' : ""}>${esc(t)}</a></li>`).join("")}
-        <li class="nav-join"><a class="btn" href="membership.html">Join the chamber</a></li>
+        <li class="nav-join"><a class="btn btn-gold" href="membership.html">Join the chamber</a></li>
       </ul></nav>
     </div></header>`;
 
@@ -51,7 +51,7 @@
 
   // ---------- Renderers ----------
   const money = (n, cents = false) => "$" + n.toLocaleString("en-US", cents ? { minimumFractionDigits: 2 } : {});
-  const MONO = [["var(--navy-800)", "var(--gold-400)"], ["var(--teal-700)", "var(--white)"], ["var(--brown-700)", "var(--gold-300)"], ["var(--gold-500)", "var(--navy-950)"]];
+  const MONO = [["var(--teal-500)", "var(--navy-950)"], ["var(--gold-500)", "var(--navy-950)"], ["var(--sepia-700)", "var(--gold-300)"], ["var(--navy-800)", "var(--gold-400)"]];
   const initials = (name) => name.replace(/&/g, " ").split(/\s+/).filter((w) => w && !/^(the|and|of|co\.?)$/i.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
   const monogram = (name, i, cls) => { const [bg, fg] = MONO[i % MONO.length]; return `<div class="${cls}" style="--mono-bg:${bg};--mono-fg:${fg}" aria-hidden="true">${esc(initials(name))}</div>`; };
   const hideIfEmpty = (el, empty) => { if (empty) el.closest("section").dataset.empty = ""; };
@@ -117,10 +117,21 @@
     }).join("");
   }
 
+  // Gold and Platinum partners strip (home page); hidden until PARTNERS has entries
+  const partners = $("#partners");
+  if (partners) {
+    hideIfEmpty(partners, !PARTNERS.length);
+    partners.innerHTML = PARTNERS.map((p) => {
+      const face = p.logo ? `<img src="${esc(p.logo)}" alt="${esc(p.name)}" loading="lazy">` : esc(p.name);
+      return `<li>${isSet(p.url) ? `<a class="partner" href="${esc(p.url)}" rel="noopener">${face}</a>` : `<span class="partner">${face}</span>`}</li>`;
+    }).join("");
+  }
+
   // Directory with search + filters
   const grid = $("#dir-grid");
   if (grid) {
     const q = $("#q"), cat = $("#cat"), area = $("#area"), chips = $("#chips");
+    q.value = new URLSearchParams(location.search).get("q") || ""; // search sent from the home page
     cat.innerHTML = `<option value="">All categories</option>` + CATEGORIES.map((c) => `<option>${esc(c)}</option>`).join("");
     area.innerHTML = `<option value="">All areas</option>` + AREAS.map((c) => `<option>${esc(c)}</option>`).join("");
     const TAGS = ["Gullah Geechee", "Afro-Caribbean", "Minority-owned", "Women-owned"];
@@ -249,13 +260,14 @@
       </div>
       <input type="hidden" name="page" value="${esc(page)}">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <p class="fine">Free. Events, grants and member news. Unsubscribe anytime; we never sell your information.</p>
+      <p class="fine">Free. Unsubscribe anytime; we never sell your information.</p>
       <p class="form-msg" role="status" hidden></p>
     </form>`;
   const SIGNUP_OK = "You're on the list! Watch your inbox for chamber news.";
   const heroSignup = $("#hero-signup");
-  if (heroSignup) { heroSignup.innerHTML = `<p class="signup-intro">Get chamber news by email.</p>${signupForm("hero-signup-form")}`; wireForm($("form", heroSignup), "newsletter", SIGNUP_OK); }
-  if (page !== "membership-success.html") {
+  if (heroSignup) { heroSignup.innerHTML = signupForm("hero-signup-form"); wireForm($("form", heroSignup), "newsletter", SIGNUP_OK); }
+  // The band above the footer, except on the welcome page and on home (which has the news bar near the top)
+  if (page !== "membership-success.html" && !heroSignup) {
     const band = document.createElement("section");
     band.className = "signup"; band.id = "newsletter"; band.setAttribute("aria-labelledby", "newsletter-title");
     band.innerHTML = `<div class="wrap">

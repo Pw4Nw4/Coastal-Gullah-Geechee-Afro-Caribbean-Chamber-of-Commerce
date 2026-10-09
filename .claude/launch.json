@@ -1,1 +1,4 @@
-{ "version": "0.0.1", "configurations": [ { "name": "site", "runtimeExecutable": "node", "runtimeArgs": ["server/index.js", "--port=5173"], "port": 5173 } ] }
+{ "version": "0.0.1", "configurations": [
+  { "name": "site", "runtimeExecutable": "node", "runtimeArgs": ["server/index.js", "--port=5173"], "port": 5173 },
+  { "name": "mascot", "runtimeExecutable": "node", "runtimeArgs": ["mascot/node_modules/vite/bin/vite.js", "mascot", "--config", "mascot/vite.config.ts"], "port": 5174 }
+] }

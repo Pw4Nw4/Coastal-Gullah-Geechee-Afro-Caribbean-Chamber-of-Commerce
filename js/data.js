@@ -64,6 +64,11 @@ const VIDEOS = [
   { id: "", title: "What is Gullah Geechee?" },
 ];
 
+// Gold and Platinum partners for the "Our partners" strip on the home page. Add each as
+//   { name: "Partner Name", logo: "images/partners/partner-name.png", url: "https://partner.example" }
+// logo and url are optional (the name shows without a logo). The strip stays hidden until one is listed.
+const PARTNERS = [];
+
 // Leadership & ambassadors (About page). Add a headshot path like "images/leaders/jane-doe.jpg"
 // as img, or leave img empty to show the person's initials. Sample entries only show while SAMPLE_DATA is true.
 const LEADERS = [

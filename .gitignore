@@ -10,6 +10,9 @@ data/
 node_modules/
 .claude/settings.local.json
 
+# The mascot demo's production build (the site's js/sankofa-mascot.js IS committed: the site has no build step)
+mascot/dist/
+
 # OS files
 .DS_Store
 Thumbs.db

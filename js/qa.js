@@ -7,14 +7,21 @@
 //     review:true are drafts the chamber must verify before launch.
 //   - q = questions people might ask (add many phrasings, they drive matching).
 //   - a = the answer. Optional link = [label, url] shown under the answer.
+//     Optional form: "newsletter" shows the email + zip sign-up under the answer.
 //   - Anything not covered falls through to FALLBACK (never guess).
+//   - PAGE_TIPS (at the end) are what the assistant says on its own about each page.
 // ============================================================
 
 const ASSISTANT = {
   name: "Chamber Assistant",
+  // The Sankofa bird's speech bubble, shown once per visit a few seconds after the first page loads.
+  // Each option opens the chat and asks it; "other" just opens the chat.
+  hello: { title: "Welcome to the chamber!", text: "How can I help you today?", options: ["How do I join?", "Get chamber news"], other: "Something else" },
   greeting: "Hi! I can answer questions about the chamber, membership, events, grants and Gullah Geechee heritage. What would you like to know?",
   // Starter buttons shown when the chat opens
-  suggestions: ["How do I join?", "What does membership cost?", "What is Gullah Geechee?", "What events are coming up?"],
+  suggestions: ["How do I join?", "What does membership cost?", "Get chamber news", "What is Gullah Geechee?", "What events are coming up?"],
+  // The newsletter sign-up the assistant shows in the chat (saved like the site's other email signups)
+  signup: { button: "Sign me up", thanks: "You're on the list! Watch your inbox for chamber news.", failed: "Sorry, that didn't go through. Please try again, or call 912-417-9591." },
 };
 
 // If the question isn't covered, the assistant says this and offers to pass it to the team.
@@ -132,7 +139,11 @@ const QA = [
     link: ["About us", "about.html"] },
   { id: "haint-blue", topic: "Culture",
     q: ["what is haint blue", "haint blue meaning", "why blue", "why are porch ceilings blue", "colors of the site"],
-    a: "Haint blue is the soft blue painted on porch ceilings and doors in Gullah Geechee tradition, believed to keep spirits (\"haints\") away. Our site colors (haint blue, indigo, rice gold, and clay) honor that heritage and Lowcountry craft.",
+    a: "Haint blue is the soft blue painted on porch ceilings and doors in Gullah Geechee tradition, believed to keep spirits (\"haints\") away. It's the pale blue on this site, alongside the chamber's gold, blue, teal and sepia brown.",
+    link: ["About us", "about.html"] },
+  { id: "sankofa", topic: "Culture", review: true,
+    q: ["what is sankofa", "sankofa", "sankofa bird", "what does sankofa mean", "why a bird", "who are you bird", "the bird"],
+    a: "Sankofa is an Adinkra symbol of the Akan people of Ghana. The word means \"go back and get it\": learn from the past to build the future. The Sankofa bird looks back for the egg on its back, and it's on our seal and our emblem.",
     link: ["About us", "about.html"] },
   { id: "sweetgrass", topic: "Culture",
     q: ["sweetgrass baskets", "what are sweetgrass baskets", "basket weaving"],
@@ -157,9 +168,9 @@ const QA = [
     a: "Call 912-417-9591. Our office is at 1305 Barnard Street, PMB #40, Savannah, GA, and we operate by appointment and at community programs and events. You can also use the Contact page.",
     link: ["Contact us", "contact.html"] },
   { id: "newsletter", topic: "Contact",
-    q: ["newsletter", "subscribe", "email list", "get updates", "stay in the loop", "mailing list"],
-    a: "Join our email list with your email and zip code to get chamber news, events, funding leads and member spotlights. Use the sign-up just above the footer on any page. It is free and you can unsubscribe anytime.",
-    link: ["Contact us", "contact.html"] },
+    q: ["get chamber news", "chamber news", "news", "newsletter", "subscribe", "email list", "get updates", "email updates", "stay in the loop", "mailing list"],
+    a: "Join our email list with your email and zip code to get chamber news, events, funding leads and member spotlights. It's free and you can unsubscribe anytime. Sign up right here, or with the sign-up form on any page.",
+    form: "newsletter" },
   { id: "text", topic: "Contact", review: true,
     q: ["text messages", "sms", "text alerts", "text updates", "opt out", "stop texts"],
     a: "Text updates are coming soon. We will only text you if you clearly opt in, and you'll always be able to opt out. Standard message and data rates may apply.",
@@ -191,3 +202,77 @@ const QA = [
     a: "Of course. Call 912-417-9591 or send a message through the Contact page and a team member will respond.",
     link: ["Contact us", "contact.html"] },
 ];
+
+// ============================================================
+//  PAGE TIPS: what the assistant says on its own about each page.
+//  After the welcome, on each new page the bird "thinks", then shares one of that page's tips, picked at random
+//  (see js/chat.js). Keep each one true to what the page says, and short (one or two sentences).
+//   - ask = a question the button asks in the chat: "Question?" (the label too) or ["Label", "Question?"].
+//     Check it gets the intended answer; ["Label", ""] just opens the chat.
+//   - link = ["Label", "url or #anchor on the page"]
+//  A few use the site data in js/data.js, so they stay current when it changes (left out if the data is empty).
+// ============================================================
+const PAGE_TIPS = (() => {
+  // typeof keeps this file usable on its own (say, by an AI pipeline) without js/data.js loaded first
+  const tiers = typeof TIERS !== "undefined" ? TIERS : [];
+  const cheapest = tiers.reduce((a, t) => (!a || t.price < a.price ? t : a), null);
+  const fee = typeof REGISTRATION_FEE !== "undefined" ? REGISTRATION_FEE : null;
+  const next = typeof EVENTS !== "undefined" ? EVENTS[0] : null;
+  const date = (e) => `${e.m.charAt(0)}${e.m.slice(1).toLowerCase()} ${Number(e.d)}`;
+  const site = typeof SITE !== "undefined" ? SITE : { phone: "912-417-9591", phoneHref: "tel:+19124179591" };
+  const news = ["Sign me up", "Get chamber news"];
+
+  const tips = {
+    "index.html": [
+      { text: "We're the chamber for Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses across the Georgia Coast.", ask: "Who can join?" },
+      tiers.length && { text: `There are ${tiers.length} membership levels, from Youngpreneurs to corporate partners, and every price is shown up front.`, ask: "Which level should I choose?" },
+      { text: "Looking for a caterer, a heritage tour or a sweetgrass basket? Search the member directory right on this page.", link: ["Search members", "#dir-title"] },
+      { text: "Our work stands on four pillars: a business incubator, cultural tourism, land preservation and a collective economic voice.", ask: "What are the pillars?" },
+      { text: "Get chamber news by email: events, grant leads and member spotlights. It's free.", ask: news },
+    ],
+    "about.html": [
+      { text: "Our communities built businesses on this coast for generations, often without a seat at the table. The chamber was started to change that.", ask: "Why was the chamber started?" },
+      { text: "The Gullah Geechee kept their language, foodways, music and craft alive along the Southern coast for generations.", ask: "What is Gullah Geechee?" },
+      { text: "See the pale blue around the site? It's haint blue, the color painted on Lowcountry porch ceilings.", ask: "What is haint blue?" },
+      { text: "I'm the Sankofa bird from our seal. Sankofa means “go back and get it”: learn from the past to build the future.", ask: "What is Sankofa?" },
+      { text: "There's a place for everyone here: join, volunteer, sponsor or partner with us.", ask: ["How can I help?", "How can I support the chamber?"] },
+    ],
+    "events.html": [
+      next && { text: `Next on the calendar: ${next.title}, ${date(next)} (${next.where}).`, link: ["See the details", "#upcoming-title"] },
+      { text: "We host workshops, markets, clinics, mixers and celebrations up and down the coast.", ask: "What events are coming up?" },
+      { text: "Have an idea for an event? We partner with artists and makers, schools, churches and local businesses.", ask: "Can I host an event?" },
+      { text: "Want to come to one? Each event has an RSVP button, and we're happy to help you sign up.", ask: "How do I RSVP?" },
+      { text: "Never miss one: the newsletter brings new events, grant leads and member news to your inbox.", ask: news },
+    ],
+    "directory.html": [
+      { text: "Every listing here is a chamber member: a neighbor, an artisan, a keeper of tradition.", link: ["Search the directory", "#q"] },
+      { text: "Shopping with purpose? Filter by Gullah Geechee, Afro-Caribbean, minority-owned or women-owned.", link: ["Filter by ownership", "#chips"] },
+      { text: "Own a business? Members get a profile here with photos, links and ownership badges.", ask: "How do I get listed?" },
+      { text: "Listings are a member benefit. Ask me which levels include one.", ask: "Is the directory free?" },
+      { text: "Sweetgrass baskets are handwoven by Gullah Geechee artisans, a craft passed down for generations.", ask: "What are sweetgrass baskets?" },
+    ],
+    "resources.html": [
+      { text: "Members hear about new grants, microloans and community lenders first.", ask: "How do I get a grant?" },
+      { text: "MBE and WBE certifications can open the door to contracts, and we can guide you through them.", ask: "How do I get certified?" },
+      { text: "Starting out? The business incubator pairs you with a mentor for your plan, bookkeeping and marketing.", ask: ["Tell me more", "Business incubator"] },
+      { text: "Heirs' property can put family land at risk. We share education and partners to help families keep it.", ask: ["Heirs' property", "Heirs property"] },
+      { text: "Run a tour or make a heritage craft? The cultural tourism toolkit helps you reach visitors.", ask: ["Cultural tourism", "Cultural tourism"] },
+    ],
+    "membership.html": [
+      cheapest && { text: `Memberships start at $${cheapest.price} for the ${cheapest.name} level. Every price is shown up front${fee ? `, plus a one-time $${fee} registration fee` : ""}.`, ask: "What does membership cost?" },
+      { text: "Not sure which level fits? Each one matches who's joining: solo owners, nonprofits, small businesses or corporate partners.", ask: "Which level should I choose?" },
+      { text: "Members get a directory listing, workshops, first look at grant leads, networking, promotion and a collective voice.", ask: ["What's included?", "Member benefits"] },
+      { text: "Paying is secure: you check out on Stripe, and we never see or store your card.", ask: "How do I pay?" },
+      { text: "Signing up a young entrepreneur? For Youngpreneurs (15 and under), a parent or guardian fills in the form.", ask: ["About Youngpreneur", "Youngpreneur"] },
+    ],
+    "contact.html": [
+      { text: `Prefer to talk? Call ${site.phone}. We meet by appointment and at our community programs and events.`, link: [`Call ${site.phone}`, site.phoneHref] },
+      { text: "Pick a topic in the form, like membership, events or sponsorship, so the right person gets back to you.", link: ["Write to us", "#contact-form"] },
+      { text: "Want to sponsor or partner? Choose “Sponsorship or partnership” in the form and tell us your idea.", ask: ["Partnership ideas", "Sponsorship"] },
+      { text: "Follow along on Instagram and TikTok for member spotlights and event news.", ask: ["Where to follow", "Social media"] },
+      { text: "Rather ask me first? I can answer questions about membership, events and grants right now.", ask: ["Ask the assistant", ""] },
+    ],
+  };
+  // Drop the data-driven tips whose data is empty
+  return Object.fromEntries(Object.entries(tips).map(([page, list]) => [page, list.filter(Boolean)]));
+})();
