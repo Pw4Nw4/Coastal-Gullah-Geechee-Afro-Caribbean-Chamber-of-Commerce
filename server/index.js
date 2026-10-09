@@ -21,6 +21,21 @@ const TYPES = {
   ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".ico": "image/x-icon",
 };
 const COMPRESS = new Set([".html", ".css", ".js", ".svg"]);
+
+// Cache busting. Pages are always served fresh, but Cloudflare and browsers keep CSS, JS and images for hours, so a
+// deploy could pair new pages with old styles and scripts. Every css/js/images URL in a page gets ?v=<hash of all
+// of them>, so any change to an asset changes the URLs; requests carrying the current version are cached for a year.
+const VERSION = (() => {
+  const hash = crypto.createHash("sha1");
+  for (const dir of ["css", "js", "images"]) {
+    for (const name of fs.readdirSync(path.join(ROOT, dir)).sort()) {
+      const file = path.join(ROOT, dir, name);
+      if (fs.statSync(file).isFile()) hash.update(name).update(fs.readFileSync(file));
+    }
+  }
+  return hash.digest("hex").slice(0, 10);
+})();
+const versionUrls = (html) => html.replace(/((?:href|src)="(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)"/g, `$1?v=${VERSION}"`);
 const SECURITY = {
   "X-Content-Type-Options": "nosniff", "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN",
   // NOINDEX=true while the site is only a preview, so search engines don't list its sample content
@@ -40,13 +55,15 @@ const notFound = (res) => {
 <p>It may have moved. Start from the <a href="/" style="color:#007081">home page</a> or call 912-417-9591.</p></body>`);
 };
 
-async function serveStatic(req, res, pathname) {
+async function serveStatic(req, res, pathname, version) {
   if (pathname === "/") pathname = "/index.html";
   if (!PUBLIC.test(pathname)) return notFound(res);
   let body;
   try { body = await fs.promises.readFile(path.join(ROOT, pathname)); } catch { return notFound(res); }
   const ext = path.extname(pathname);
-  const headers = { ...SECURITY, "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=3600" };
+  if (ext === ".html") body = Buffer.from(versionUrls(body.toString("utf8")));
+  const cache = ext === ".html" ? "no-cache" : version === VERSION ? "public, max-age=31536000, immutable" : "public, max-age=3600";
+  const headers = { ...SECURITY, "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cache };
   if (COMPRESS.has(ext) && /\bgzip\b/.test(req.headers["accept-encoding"] || "")) {
     body = zlib.gzipSync(body);
     headers["Content-Encoding"] = "gzip";
@@ -126,7 +143,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (req.method !== "GET" && req.method !== "HEAD") return json(res, 405, { error: "Method not allowed." });
-    return serveStatic(req, res, pathname);
+    return serveStatic(req, res, pathname, url.searchParams.get("v"));
   } catch (e) {
     if (res.headersSent) return res.end();
     if (e.status === 413) return json(res, 413, { error: "That's too long. Please shorten it and try again." });
@@ -137,5 +154,5 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => console.log(`Chamber site listening on port ${PORT}`));
+server.listen(PORT, () => console.log(`Chamber site listening on port ${PORT} (assets version ${VERSION})`));
 process.on("SIGTERM", () => server.close(() => process.exit(0)));

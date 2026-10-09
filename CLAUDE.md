@@ -14,6 +14,8 @@ The mascot demo is the `mascot` launch configuration (Vite on port 5174; run `np
 
 The server only serves files matching its `PUBLIC` pattern (`*.html` at the root, `/css`, `/js`, `/images`). A new public folder or file type must be added there and to `TYPES`, or it 404s.
 
+Cloudflare and browsers cache CSS, JS and images, so the server stamps every `css/`, `js/` and `images/` URL in a page with `?v=<hash of those folders>` (`VERSION` in `server/index.js`, computed at startup) and caches requests carrying the current version for a year. Scripts that load files themselves reuse the stamp from their own URL (see `VERSION` in `chat.js`). Pushes to `main` deploy automatically: a GitHub webhook calls Coolify, which rebuilds the Docker image.
+
 ## Architecture
 
 - **Content lives in `js/data.js`** as global consts: `SITE` (contact info, donate and social links, `checkoutEndpoint`, `formsEndpoint`), `CATEGORIES`, `AREAS`, `MEMBERS`, `EVENTS`, `GALLERY`, `VIDEOS`, `PARTNERS` (Gold and Platinum sponsors for the home page), `LEADERS`, `REGISTRATION_FEE`, `TIERS`. Editing site content means editing this file, not the HTML.

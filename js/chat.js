@@ -46,7 +46,9 @@
   const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  const BIRD = "images/sankofa-mascot.webp";
+  // The server stamps this script's URL with the site's asset version (?v=...); files loaded from here reuse it
+  const VERSION = document.currentScript ? new URL(document.currentScript.src).search : "";
+  const BIRD = `images/sankofa-mascot.webp${VERSION}`;
   const H = ASSISTANT.hello;
   const root = document.createElement("div");
   root.className = "chat";
@@ -95,7 +97,7 @@
   else {
     const slow = setTimeout(showButton, 2500);
     const script = document.createElement("script");
-    script.src = "js/sankofa-mascot.js";
+    script.src = `js/sankofa-mascot.js${VERSION}`;
     script.onload = () => { clearTimeout(slow); window.SankofaMascot ? useMascot(window.SankofaMascot) : showButton(); };
     script.onerror = () => { clearTimeout(slow); showButton(); };
     document.head.appendChild(script);
