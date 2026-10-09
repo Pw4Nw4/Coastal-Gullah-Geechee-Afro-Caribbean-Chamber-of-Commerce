@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Membership | Coastal Gullah Geechee & Afro-Caribbean Chamber</title>
+<meta name="description" content="Join the chamber: transparent membership pricing, a directory listing, workshops, grant leads, networking and a collective voice.">
+<meta name="theme-color" content="#232856">
+<link rel="icon" href="images/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="images/favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,500..900;1,500..800&family=Libre+Franklin:ital,wght@0,400..800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main id="main" tabindex="-1">
+
+<div class="page-head"><div class="wrap">
+  <h1>Grow together. <em>Join</em> the chamber.</h1>
+  <p class="lead">Whether you run a business, back one, or want to help preserve a culture, there's a place for you. Every price is shown up front, including the one-time $25 registration fee.</p>
+</div></div>
+
+<section aria-labelledby="benefits-title">
+  <div class="wrap">
+    <div class="section-head"><h2 id="benefits-title">What membership gets you</h2></div>
+    <ul class="benefits" data-reveal="stagger">
+      <li><h3>A directory listing</h3><p>A profile that customers, partners and buyers can find.</p></li>
+      <li><h3>Workshops &amp; mentorship</h3><p>Training, certifications and one-on-one guidance.</p></li>
+      <li><h3>Grant &amp; funding leads</h3><p>First look at opportunities in our resource pipeline.</p></li>
+      <li><h3>Networking</h3><p>Mixers, markets and introductions that lead to business.</p></li>
+      <li><h3>Promotion</h3><p>Spotlights on our social channels and in the newsletter.</p></li>
+      <li><h3>A collective voice</h3><p>Advocacy on the policies that affect coastal businesses.</p></li>
+    </ul>
+  </div>
+</section>
+
+<section class="on-haint-soft" id="join" aria-labelledby="join-title">
+  <div class="narrow">
+    <h2 id="join-title">Start your membership</h2>
+    <p class="req-note">Fields marked * are required. You'll review your total before paying.</p>
+    <form id="join-form" class="join-form" novalidate>
+      <fieldset class="step">
+        <legend class="step-title"><span class="step-num">1</span> Choose your level</legend>
+        <div id="tier-list" class="tier-list"></div>
+        <p class="tier-help">Not sure which level fits? <a href="contact.html">Ask our team</a> or call <a href="tel:+19124179591">912-417-9591</a>.</p>
+      </fieldset>
+
+      <fieldset class="step">
+        <legend class="step-title"><span class="step-num">2</span> Tell us about you</legend>
+        <p class="form-note" id="guardian-note" hidden>Applying for a Youngpreneur? A parent or guardian should fill out this form with their own contact details, and add the young entrepreneur's name in the notes below.</p>
+        <div class="row">
+          <div class="field"><label for="n">Full name *</label><input id="n" name="name" required autocomplete="name"></div>
+          <div class="field"><label for="b">Business <span class="opt">(if any)</span></label><input id="b" name="business" autocomplete="organization"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="e">Email *</label><input id="e" name="email" type="email" required autocomplete="email"></div>
+          <div class="field"><label for="p">Phone *</label><input id="p" name="phone" type="tel" required autocomplete="tel"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="z">Zip code *</label><input id="z" name="zip" required autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10"></div>
+          <div class="field"><label for="c">Category</label><select id="c" name="category"><option>Food &amp; Hospitality</option><option>Arts &amp; Crafts</option><option>Professional Services</option><option>Retail &amp; Fashion</option><option>Tours &amp; Culture</option><option>Health &amp; Wellness</option><option>Construction &amp; Trades</option><option>Education &amp; Media</option><option>Other</option></select></div>
+        </div>
+        <div class="field"><label for="m">Tell us about your business or interest <span class="opt">(optional)</span></label><textarea id="m" name="about" rows="4" maxlength="450"></textarea></div>
+        <label class="check"><input type="checkbox" name="newsletter" checked> Send me the newsletter: events, grants and member news.</label>
+        <label class="check"><input type="checkbox" name="sms"> Text me updates. Message and data rates may apply; reply STOP to opt out.</label>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      </fieldset>
+
+      <fieldset class="step">
+        <legend class="step-title"><span class="step-num">3</span> Review and pay</legend>
+        <dl class="receipt" id="sum" aria-live="polite"></dl>
+        <p class="form-msg bad" id="join-err" role="alert" hidden></p>
+        <button class="btn btn-gold" type="submit">Continue to secure payment</button>
+        <p class="fine">You'll pay on Stripe's secure checkout. We never see or store your card details.</p>
+      </fieldset>
+    </form>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/qa.js"></script><script src="js/main.js"></script><script src="js/chat.js"></script>
+</body>
+</html>

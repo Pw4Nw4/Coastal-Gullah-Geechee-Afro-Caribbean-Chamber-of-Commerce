@@ -1,0 +1,14 @@
+# Secrets (Stripe key etc.): set them in Netlify, never commit them
+.env
+.env.*
+!.env.example
+
+# Netlify CLI and local tooling
+.netlify/
+node_modules/
+.claude/settings.local.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini

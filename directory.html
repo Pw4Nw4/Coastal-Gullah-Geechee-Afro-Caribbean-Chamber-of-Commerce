@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Business Directory | Coastal Gullah Geechee & Afro-Caribbean Chamber</title>
+<meta name="description" content="Search Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses on the Georgia Coast.">
+<meta name="theme-color" content="#232856">
+<link rel="icon" href="images/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="images/favicon-64.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Besley:ital,wght@0,500..900;1,500..800&family=Libre+Franklin:ital,wght@0,400..800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="site-header"></div>
+<main id="main" tabindex="-1">
+
+<div class="page-head"><div class="wrap">
+  <h1>Find a business. <em>Support</em> the community.</h1>
+  <p class="lead">Every listing is a neighbor, an artisan, a keeper of tradition. Search by name, category or area.</p>
+</div></div>
+
+<section class="tight" aria-labelledby="dir-title">
+  <div class="wrap">
+    <h2 id="dir-title" class="visually-hidden">Member businesses</h2>
+    <p class="draft-note">Sample listings. Replace them in <code>MEMBERS</code> in <code>js/data.js</code>.</p>
+    <div class="filters" role="search">
+      <div><label for="q">Search</label><input id="q" type="search" placeholder="Try “baskets” or “catering”"></div>
+      <div><label for="cat">Category</label><select id="cat"></select></div>
+      <div><label for="area">Area</label><select id="area"></select></div>
+    </div>
+    <fieldset class="chips" id="chips"><legend>Ownership</legend></fieldset>
+    <p id="count" class="count" aria-live="polite"></p>
+    <ul id="dir-grid" class="biz-grid"></ul>
+  </div>
+</section>
+
+<section class="on-haint-soft" aria-labelledby="listed-title">
+  <div class="wrap split">
+    <div>
+      <h2 id="listed-title">Get your business listed</h2>
+      <p class="lead">Members get a directory profile in front of customers, partners and buyers.</p>
+      <a class="btn" href="membership.html">Join and get listed</a>
+    </div>
+    <ul class="listing-includes" aria-label="What a listing includes">
+      <li>Logo, photos and business description</li>
+      <li>Category, service area and ownership badges</li>
+      <li>Website, phone and social links</li>
+      <li>Features in the newsletter and social spotlights</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+<div id="site-footer"></div>
+<script src="js/data.js"></script><script src="js/qa.js"></script><script src="js/main.js"></script><script src="js/chat.js"></script>
+</body>
+</html>

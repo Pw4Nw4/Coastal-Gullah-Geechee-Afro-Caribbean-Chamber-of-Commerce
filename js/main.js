@@ -1,0 +1,289 @@
+// Shared header/footer, data-driven sections, forms and motion for every page.
+(() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const page = location.pathname.split("/").pop() || "index.html";
+  const isSet = (url) => Boolean(url) && url !== "#";
+
+  // Draft mode shows the dashed "Draft" notes and keeps empty sections visible (see .is-draft in styles.css)
+  if (SAMPLE_DATA) document.documentElement.classList.add("is-draft");
+
+  // ---------- Shared header / footer ----------
+  const NAV = [
+    ["about.html", "About"], ["events.html", "Programs & Events"], ["directory.html", "Directory"],
+    ["resources.html", "Resources & Grants"], ["contact.html", "Contact"],
+  ];
+  const donate = isSet(SITE.donate) ? `<a href="${esc(SITE.donate)}">Donate</a>` : "";
+  const socials = SITE.social.filter((s) => isSet(s.url));
+
+  $("#site-header").outerHTML = `
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="utility"><div class="wrap">
+      <span class="utility-where">Savannah, Georgia · Open by appointment</span>
+      <span class="utility-links"><a href="${SITE.phoneHref}">${esc(SITE.phone)}</a>${donate}</span>
+    </div></div>
+    <header class="site"><div class="wrap">
+      <a class="brand" href="index.html"><img src="images/emblem-200.webp" width="56" height="56" alt=""><span><b>Coastal Gullah Geechee</b><small>&amp; Afro-Caribbean Chamber of Commerce</small></span></a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><span class="menu-icon" aria-hidden="true"></span><span class="menu-label">Menu</span></button>
+      <nav class="main" id="nav" aria-label="Main"><ul>
+        ${NAV.map(([h, t]) => `<li><a href="${h}"${h === page ? ' aria-current="page"' : ""}>${esc(t)}</a></li>`).join("")}
+        <li class="nav-join"><a class="btn" href="membership.html">Join the chamber</a></li>
+      </ul></nav>
+    </div></header>`;
+
+  $("#site-footer").outerHTML = `
+    <footer class="site"><div class="wrap">
+      <div class="foot-top">
+        <div class="foot-brand"><img src="images/crest-256.webp" width="88" height="88" alt="" loading="lazy">
+          <div><b>${esc(SITE.name)}</b><p>Educating, empowering and advocating for Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses across the Georgia Coast and beyond.</p></div></div>
+        <div><h2 class="foot-h">Explore</h2><ul><li><a href="index.html">Home</a></li>${NAV.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("")}<li><a href="membership.html">Membership</a></li></ul></div>
+        <div><h2 class="foot-h">Visit</h2><ul><li>${esc(SITE.address)}</li><li>By appointment and at community events</li><li><a href="${SITE.phoneHref}">${esc(SITE.phone)}</a></li>${donate ? `<li>${donate}</li>` : ""}</ul></div>
+        ${socials.length ? `<div><h2 class="foot-h">Follow</h2><ul>${socials.map((s) => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.label)}</a></li>`).join("")}</ul></div>` : ""}
+      </div>
+      <div class="legal"><span>© ${new Date().getFullYear()} ${esc(SITE.name)}</span><span class="motto-line">Build Business. Preserve Culture. Strengthen Legacy.</span></div>
+    </div></footer>`;
+
+  const menuBtn = $(".menu-btn"), nav = $("#nav");
+  const setMenu = (open) => { nav.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", open); $(".menu-label", menuBtn).textContent = open ? "Close" : "Menu"; };
+  menuBtn.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); menuBtn.focus(); } });
+
+  // ---------- Renderers ----------
+  const money = (n, cents = false) => "$" + n.toLocaleString("en-US", cents ? { minimumFractionDigits: 2 } : {});
+  const MONO = [["var(--navy-800)", "var(--gold-400)"], ["var(--teal-700)", "var(--white)"], ["var(--brown-700)", "var(--gold-300)"], ["var(--gold-500)", "var(--navy-950)"]];
+  const initials = (name) => name.replace(/&/g, " ").split(/\s+/).filter((w) => w && !/^(the|and|of|co\.?)$/i.test(w)).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+  const monogram = (name, i, cls) => { const [bg, fg] = MONO[i % MONO.length]; return `<div class="${cls}" style="--mono-bg:${bg};--mono-fg:${fg}" aria-hidden="true">${esc(initials(name))}</div>`; };
+  const hideIfEmpty = (el, empty) => { if (empty) el.closest("section").dataset.empty = ""; };
+
+  const bizCard = (b, i) => `
+    <li class="biz">${b.img ? `<img class="biz-img" src="${esc(b.img)}" alt="" loading="lazy">` : monogram(b.name, i, "monogram")}
+      <div class="biz-body"><span class="tag">${esc(b.cat)}</span><h3>${esc(b.name)}</h3>
+        <p class="meta">${esc(b.area)}</p><p>${esc(b.desc)}</p>
+        <ul class="badges" aria-label="Ownership">${b.tags.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+        <div class="links">${isSet(b.url) ? `<a href="${esc(b.url)}" rel="noopener">Website</a>` : ""}${b.phone ? `<a href="tel:${esc(b.phone)}">Call</a>` : ""}</div></div></li>`;
+
+  const eventRow = (e, full) => `
+    <li class="event"><div class="date"><b>${esc(e.d)}</b><span>${esc(e.m)}</span></div>
+      <div><span class="tag">${esc(e.type)}</span><h3>${esc(e.title)}</h3><p class="meta">${esc(e.where)}</p>${full ? `<p class="event-desc">${esc(e.desc)}</p>` : ""}</div>
+      <a class="btn btn-outline" href="${esc(e.url)}">RSVP<span class="visually-hidden"> for ${esc(e.title)}</span></a></li>`;
+
+  const homeEvents = $("#home-events");
+  if (homeEvents) homeEvents.innerHTML = EVENTS.slice(0, 3).map((e) => eventRow(e, false)).join("");
+  const allEvents = $("#events-list");
+  if (allEvents) allEvents.innerHTML = EVENTS.map((e) => eventRow(e, true)).join("");
+
+  const homeDir = $("#home-dir");
+  if (homeDir) homeDir.innerHTML = MEMBERS.slice(0, 3).map(bizCard).join("");
+
+  // Past event pictures with a native <dialog> viewer
+  const gal = $("#gallery");
+  if (gal) {
+    const shots = GALLERY.filter((g) => g.src).slice(0, Number(gal.dataset.limit) || undefined);
+    hideIfEmpty(gal, !shots.length);
+    if (shots.length) {
+      gal.innerHTML = shots.map((g, i) => `<figure><button type="button" class="shot" data-i="${i}" aria-label="Enlarge: ${esc(g.cap)}"><img src="${esc(g.src)}" alt="${esc(g.cap)}" loading="lazy"></button><figcaption>${esc(g.cap)}</figcaption></figure>`).join("");
+      const viewer = document.createElement("dialog");
+      viewer.className = "lightbox";
+      viewer.setAttribute("aria-label", "Photo viewer");
+      viewer.innerHTML = `<form method="dialog"><button class="lightbox-close" aria-label="Close photo">×</button></form><figure><img alt=""><figcaption></figcaption></figure>`;
+      document.body.append(viewer);
+      gal.addEventListener("click", (e) => {
+        const b = e.target.closest(".shot"); if (!b) return;
+        const g = shots[Number(b.dataset.i)], img = $("img", viewer);
+        img.src = g.src; img.alt = g.cap; $("figcaption", viewer).textContent = g.cap;
+        viewer.showModal();
+      });
+      viewer.addEventListener("click", (e) => { if (e.target === viewer) viewer.close(); });
+    }
+  }
+
+  const vids = $("#videos");
+  if (vids) {
+    const list = VIDEOS.filter((v) => v.id);
+    hideIfEmpty(vids, !list.length);
+    vids.innerHTML = list.map((v) => `<figure class="video-card"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.id)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div><figcaption>${esc(v.title)}</figcaption></figure>`).join("");
+  }
+
+  const leaders = $("#leaders");
+  if (leaders) {
+    const list = SAMPLE_DATA ? LEADERS : LEADERS.filter((l) => !l.sample);
+    hideIfEmpty(leaders, !list.length);
+    leaders.innerHTML = list.map((l, i) => {
+      const face = l.img ? `<img class="avatar" src="${esc(l.img)}" alt="" loading="lazy">`
+        : l.sample ? `<div class="avatar avatar-pending" aria-hidden="true"><img src="images/emblem-200.webp" alt=""></div>`
+        : monogram(l.name, i, "avatar");
+      return `<li class="leader">${face}<h3>${esc(l.name)}</h3><p>${esc(l.role)}</p></li>`;
+    }).join("");
+  }
+
+  // Directory with search + filters
+  const grid = $("#dir-grid");
+  if (grid) {
+    const q = $("#q"), cat = $("#cat"), area = $("#area"), chips = $("#chips");
+    cat.innerHTML = `<option value="">All categories</option>` + CATEGORIES.map((c) => `<option>${esc(c)}</option>`).join("");
+    area.innerHTML = `<option value="">All areas</option>` + AREAS.map((c) => `<option>${esc(c)}</option>`).join("");
+    const TAGS = ["Gullah Geechee", "Afro-Caribbean", "Minority-owned", "Women-owned"];
+    const active = new Set();
+    chips.insertAdjacentHTML("beforeend", TAGS.map((t) => `<button class="chip" type="button" aria-pressed="false" data-tag="${esc(t)}">${esc(t)}</button>`).join(""));
+    const render = () => {
+      const t = q.value.trim().toLowerCase();
+      const res = MEMBERS.filter((m) => (!cat.value || m.cat === cat.value) && (!area.value || m.area === area.value)
+        && [...active].every((a) => m.tags.includes(a)) && (!t || [m.name, m.desc, m.cat, m.area, ...m.tags].join(" ").toLowerCase().includes(t)));
+      $("#count").textContent = `${res.length} ${res.length === 1 ? "business" : "businesses"}`;
+      grid.innerHTML = res.length ? res.map(bizCard).join("")
+        : `<li class="empty"><p>No businesses match those filters yet.</p><button class="btn btn-outline" type="button" data-clear>Clear filters</button></li>`;
+    };
+    chips.addEventListener("click", (e) => {
+      const c = e.target.closest(".chip"); if (!c) return;
+      const on = c.getAttribute("aria-pressed") !== "true";
+      c.setAttribute("aria-pressed", on);
+      on ? active.add(c.dataset.tag) : active.delete(c.dataset.tag);
+      render();
+    });
+    grid.addEventListener("click", (e) => {
+      if (!e.target.closest("[data-clear]")) return;
+      q.value = cat.value = area.value = ""; active.clear();
+      $$(".chip", chips).forEach((c) => c.setAttribute("aria-pressed", "false"));
+      render(); q.focus();
+    });
+    [q, cat, area].forEach((el) => el.addEventListener("input", render));
+    render();
+  }
+
+  // ---------- Membership: price list doubles as step 1 of the form, grouped by who each level is for ----------
+  const tierList = $("#tier-list");
+  if (tierList) {
+    // Unapproved benefit lists (includesDraft) only show in draft mode, labeled as drafts
+    const showIncludes = (t) => t.includes?.length && (!t.includesDraft || SAMPLE_DATA);
+    const includes = (t) => {
+      const base = TIERS.find((x) => x.id === t.includesFrom);
+      return `<span class="tier-includes" id="tier-${esc(t.id)}-inc">
+        <span class="tier-inc-title">${base ? `Everything in ${esc(base.name)}, plus:` : "Includes:"}${t.includesDraft ? ` <span class="tier-draft">Draft</span>` : ""}</span>
+        <span class="tier-inc-list">${t.includes.map((item) => `<span class="tier-inc-item">${esc(item)}<span class="visually-hidden">;</span></span>`).join("")}</span></span>`;
+    };
+    const groups = [...new Set(TIERS.map((t) => t.group))];
+    tierList.innerHTML = groups.map((g, gi) => `
+      <div class="tier-group" role="group" aria-labelledby="tier-group-${gi}">
+        <p class="tier-group-title" id="tier-group-${gi}">${esc(g)}</p>
+        ${TIERS.filter((t) => t.group === g).map((t) => {
+          const id = esc(t.id), inc = showIncludes(t);
+          return `
+        <label class="tier-opt${t.featured ? " featured" : ""}">
+          <input type="radio" name="tier" value="${id}" required aria-labelledby="tier-${id}-name tier-${id}-fit tier-${id}-price" aria-describedby="tier-${id}-desc${inc ? ` tier-${id}-inc` : ""}">
+          <span class="tier-main"><span class="tier-head"><span class="tier-name" id="tier-${id}-name">${esc(t.name)}</span><span class="tier-fit" id="tier-${id}-fit">${esc(t.fit)}</span></span>
+            <span class="tier-desc" id="tier-${id}-desc">${esc(t.blurb)}</span></span>
+          <span class="tier-price" id="tier-${id}-price"><b>${money(t.price)}</b> <small>+ ${money(REGISTRATION_FEE)} fee · ${money(t.price + REGISTRATION_FEE)} total</small></span>
+          ${inc ? includes(t) : ""}
+        </label>`;
+        }).join("")}
+      </div>`).join("");
+  }
+
+  // Membership form -> Stripe Checkout (server creates the session; see netlify/functions/create-checkout.js)
+  const jf = $("#join-form");
+  if (jf) {
+    const sum = $("#sum", jf), err = $("#join-err", jf), go = $("button[type=submit]", jf), goLabel = go.textContent;
+    const chosen = () => TIERS.find((t) => t.id === jf.elements.tier.value);
+    const guardian = $("#guardian-note", jf);
+    const update = () => {
+      const t = chosen();
+      if (guardian) guardian.hidden = !t?.guardian;
+      sum.innerHTML = t
+        ? `<div><dt>${esc(t.name)} membership</dt><dd>${money(t.price, true)}</dd></div><div><dt>Registration fee (one time)</dt><dd>${money(REGISTRATION_FEE, true)}</dd></div><div class="total"><dt>Total due today</dt><dd>${money(t.price + REGISTRATION_FEE, true)}</dd></div>`
+        : `<div class="total"><dt>Total due today</dt><dd>Choose a level in step 1</dd></div>`;
+    };
+    jf.addEventListener("change", (e) => { if (e.target.name === "tier") update(); });
+    const pre = new URLSearchParams(location.search).get("tier");
+    const preInput = $$('input[name="tier"]', jf).find((i) => i.value === pre);
+    if (preInput) preInput.checked = true;
+    update();
+    jf.addEventListener("submit", async (e) => {
+      e.preventDefault(); err.hidden = true;
+      if (!jf.reportValidity()) return;
+      go.disabled = true; go.textContent = "Opening secure checkout…";
+      try {
+        const body = Object.fromEntries(new FormData(jf).entries());
+        body.newsletter = jf.elements.newsletter.checked; body.sms = jf.elements.sms.checked;
+        const r = await fetch(SITE.checkoutEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const d = await r.json();
+        if (!r.ok || !d.url) throw new Error(d.error || "We couldn't start checkout.");
+        location.href = d.url;
+      } catch (x) {
+        err.textContent = `${x.message} Please try again, or call ${SITE.phone} and we'll help you join.`; err.hidden = false;
+        go.disabled = false; go.textContent = goLabel;
+      }
+    });
+  }
+
+  // ---------- Netlify Forms (newsletter + contact), submitted in place ----------
+  const postForm = (form, name) => {
+    const d = new FormData(form); d.set("form-name", name);
+    return fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(d).toString() });
+  };
+  const wireForm = (form, name, okText) => {
+    const msg = $(".form-msg", form), go = $("button[type=submit]", form), label = go.textContent;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault(); msg.hidden = true;
+      if (!form.reportValidity()) return;
+      go.disabled = true; go.textContent = "Sending…";
+      try {
+        if (form.elements.website.value) throw new Error("spam");
+        const r = await postForm(form, name);
+        if (!r.ok) throw new Error(String(r.status));
+        form.reset(); msg.className = "form-msg ok"; msg.textContent = okText;
+      } catch {
+        msg.className = "form-msg bad"; msg.textContent = `Sorry, that didn't go through. Please try again, or call ${SITE.phone}.`;
+      }
+      msg.hidden = false; go.disabled = false; go.textContent = label;
+    });
+  };
+
+  // Email signup (email + zip): in the home hero and in a band above every footer
+  const signupForm = (id) => `
+    <form class="signup-form" id="${id}" novalidate>
+      <div class="signup-row">
+        <div class="field"><label for="${id}-email">Email</label><input id="${id}-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+        <div class="field"><label for="${id}-zip">Zip code</label><input id="${id}-zip" name="zip" required inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" placeholder="31401"></div>
+        <button class="btn btn-gold" type="submit">Keep me in the loop</button>
+      </div>
+      <input type="hidden" name="page" value="${esc(page)}">
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="fine">Free. Events, grants and member news. Unsubscribe anytime; we never sell your information.</p>
+      <p class="form-msg" role="status" hidden></p>
+    </form>`;
+  const SIGNUP_OK = "You're on the list! Watch your inbox for chamber news.";
+  const heroSignup = $("#hero-signup");
+  if (heroSignup) { heroSignup.innerHTML = `<p class="signup-intro">Get chamber news by email.</p>${signupForm("hero-signup-form")}`; wireForm($("form", heroSignup), "newsletter", SIGNUP_OK); }
+  if (page !== "membership-success.html") {
+    const band = document.createElement("section");
+    band.className = "signup"; band.id = "newsletter"; band.setAttribute("aria-labelledby", "newsletter-title");
+    band.innerHTML = `<div class="wrap">
+      <div><h2 id="newsletter-title">Never miss an event, grant or opportunity.</h2><p>Chamber news, upcoming events, funding leads and member spotlights, straight to your inbox.</p></div>
+      <div class="signup-card">${signupForm("band-signup-form")}</div></div>`;
+    $("footer.site").before(band);
+    wireForm($("form", band), "newsletter", SIGNUP_OK);
+  }
+
+  const contact = $("#contact-form");
+  if (contact) wireForm(contact, "contact", "Thank you! Your message is on its way, and a member of the chamber team will reply soon.");
+
+  // ---------- Motion: lists stagger in as they scroll into view ----------
+  // Content is visible by default; only elements that start below the fold animate, and only once.
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches && "IntersectionObserver" in window) {
+    const seen = new WeakSet();
+    const io = new IntersectionObserver((entries) => {
+      for (const { target: el, isIntersecting } of entries) {
+        if (!seen.has(el)) { seen.add(el); if (isIntersecting) io.unobserve(el); continue; }
+        if (!isIntersecting) continue;
+        io.unobserve(el);
+        const items = el.dataset.reveal === "stagger" ? [...el.children] : [el];
+        items.forEach((item, i) => item.animate(
+          [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }],
+          { duration: 700, delay: Math.min(i, 6) * 70, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "backwards" },
+        ));
+      }
+    });
+    $$("[data-reveal]").forEach((el) => io.observe(el));
+  }
+})();
