@@ -16,7 +16,8 @@ const SITE = {
   email: "info@coastalgullahgeecheeafrocarribeanchamber.com", // confirm real address
   address: "1305 Barnard Street, PMB #40, Savannah, GA",
   donate: "#", // paste your donation link here; "Donate" links stay hidden while this is "#"
-  checkoutEndpoint: "/.netlify/functions/create-checkout", // serverless function that starts Stripe Checkout
+  checkoutEndpoint: "/api/checkout", // starts Stripe Checkout (server/checkout.js)
+  formsEndpoint: "/api/forms", // saves signups, messages and chat questions (server/forms.js)
   // Social links set to "#" are hidden until a real URL is added
   social: [
     { label: "Facebook", url: "#" },
@@ -75,7 +76,7 @@ const LEADERS = [
 // Membership levels: names, groups and descriptions from the live site's membership page, prices (in dollars)
 // from its checkout. Every membership also pays REGISTRATION_FEE. "fit" is the short who-qualifies tag shown
 // next to the name; guardian: true shows the parent/guardian note in the form. Ids and prices must match
-// netlify/functions/create-checkout.js, which decides what Stripe charges.
+// server/checkout.js, which decides what Stripe charges.
 // "includes" lists what the level comes with; includesFrom names the level it builds on ("Everything in X, plus").
 // includesDraft: true marks a PROPOSAL the chamber hasn't approved: it shows with a "Draft" label while SAMPLE_DATA
 // is true and is hidden once SAMPLE_DATA is false. Set includesDraft to false after the chamber confirms the list.

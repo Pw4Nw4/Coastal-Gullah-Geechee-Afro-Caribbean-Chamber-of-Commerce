@@ -18,12 +18,14 @@ const ASSISTANT = {
 };
 
 // If the question isn't covered, the assistant says this and offers to pass it to the team.
+// Sent questions are saved on the server with the other form submissions (see server/forms.js).
 const FALLBACK = {
-  text: "I don't have a confirmed answer to that yet, and I don't want to guess. I can send your question to our team so a person follows up, or you can call us.",
+  text: "I don't have a confirmed answer to that yet, and I don't want to guess. I can send your question to our team, or you can call us at 912-417-9591.",
+  emailLabel: "Your email, so we can reply (optional)",
   sendLabel: "Send my question to the team",
-  thanks: "Thank you! Your question was passed along and a team member will follow up. You can also call 912-417-9591.",
-  // Unanswered questions are saved in this browser (localStorage key) and emailed via mailto to SITE.email
-  storageKey: "chamber-unanswered-questions",
+  thanks: "Thank you! A team member will reply by email.",
+  thanksNoEmail: "Thank you! Your question was passed to the team. For a reply, call 912-417-9591.",
+  failed: "Sorry, your question didn't go through. Please try again, or call 912-417-9591.",
 };
 
 // Guardrails for any AI model that uses this file as its knowledge.

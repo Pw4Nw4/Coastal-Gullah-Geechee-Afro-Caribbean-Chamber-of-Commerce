@@ -25,8 +25,13 @@
     return score >= THRESHOLD ? best : null;
   };
 
-  const saved = () => { try { return JSON.parse(localStorage.getItem(FALLBACK.storageKey) || "[]"); } catch { return []; } };
-  const save = (q) => { try { localStorage.setItem(FALLBACK.storageKey, JSON.stringify([...saved(), { q, at: new Date().toISOString() }])); } catch {} };
+  // Unanswered questions go to the server with the other form submissions
+  const sendQuestion = (question, email) => fetch(SITE.formsEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ "form-name": "question", question, email, page: location.pathname.split("/").pop() || "index.html" }).toString(),
+  }).then((r) => { if (!r.ok) throw new Error(String(r.status)); });
+  let asked = 0;
 
   const root = document.createElement("div");
   root.className = "chat";
@@ -47,13 +52,25 @@
   const reply = (q) => {
     const hit = answer(q);
     if (hit) return add("bot", `<p>${esc(hit.a)}</p>${hit.link ? `<a class="chat-link" href="${esc(hit.link[1])}">${esc(hit.link[0])} →</a>` : ""}`);
-    const d = add("bot", `<p>${esc(FALLBACK.text)}</p><button class="btn btn-gold chat-send" type="button">${esc(FALLBACK.sendLabel)}</button>`);
-    d.querySelector(".chat-send").addEventListener("click", (e) => {
-      save(q);
-      const to = (typeof SITE !== "undefined" && SITE.email) || "";
-      if (to) window.location.href = `mailto:${to}?subject=${encodeURIComponent("Website question")}&body=${encodeURIComponent(q)}`;
-      e.target.remove();
-      add("bot", `<p>${esc(FALLBACK.thanks)}</p>`);
+    const id = `chat-ask-${++asked}`;
+    const d = add("bot", `<p>${esc(FALLBACK.text)}</p>
+      <form class="chat-ask" novalidate><label for="${id}">${esc(FALLBACK.emailLabel)}</label>
+        <input id="${id}" type="email" autocomplete="email" placeholder="you@example.com">
+        <button class="btn btn-gold" type="submit">${esc(FALLBACK.sendLabel)}</button></form>`);
+    const form = d.querySelector(".chat-ask"), input = form.querySelector("input"), btn = form.querySelector("button");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      const email = input.value.trim();
+      btn.disabled = true; btn.textContent = "Sending…";
+      try {
+        await sendQuestion(q, email);
+        form.remove();
+        add("bot", `<p>${esc(email ? FALLBACK.thanks : FALLBACK.thanksNoEmail)}</p>`);
+      } catch {
+        btn.disabled = false; btn.textContent = FALLBACK.sendLabel;
+        add("bot", `<p>${esc(FALLBACK.failed)}</p>`);
+      }
     });
   };
 

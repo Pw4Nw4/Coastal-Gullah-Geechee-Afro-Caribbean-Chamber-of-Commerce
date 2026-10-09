@@ -531,4 +531,6 @@ footer.site a:hover { color: var(--gold-400); text-decoration: underline; }
 .chat-form { display: flex; gap: 0.5rem; padding: 0.7rem; border-top: 1px solid var(--line); }
 .chat-form input { flex: 1; min-width: 0; min-height: 2.75rem; padding: 0.55rem 0.8rem; }
 .chat .btn { min-height: 2.75rem; padding: 0.5rem 1rem; }
-.chat .btn-gold { margin-top: 0.5rem; }
+.chat-ask { display: grid; gap: 0.4rem; margin-top: 0.6rem; }
+.chat-ask label { margin: 0; font-size: 0.875rem; }
+.chat-ask input { min-height: 2.75rem; padding: 0.5rem 0.75rem; }

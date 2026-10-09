@@ -180,7 +180,7 @@
       </div>`).join("");
   }
 
-  // Membership form -> Stripe Checkout (server creates the session; see netlify/functions/create-checkout.js)
+  // Membership form -> Stripe Checkout (the server creates the session; see server/checkout.js)
   const jf = $("#join-form");
   if (jf) {
     const sum = $("#sum", jf), err = $("#join-err", jf), go = $("button[type=submit]", jf), goLabel = go.textContent;
@@ -206,7 +206,7 @@
         const body = Object.fromEntries(new FormData(jf).entries());
         body.newsletter = jf.elements.newsletter.checked; body.sms = jf.elements.sms.checked;
         const r = await fetch(SITE.checkoutEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-        const d = await r.json();
+        const d = await r.json().catch(() => ({}));
         if (!r.ok || !d.url) throw new Error(d.error || "We couldn't start checkout.");
         location.href = d.url;
       } catch (x) {
@@ -216,10 +216,10 @@
     });
   }
 
-  // ---------- Netlify Forms (newsletter + contact), submitted in place ----------
+  // ---------- Forms (newsletter + contact) post to the site's server (server/forms.js) ----------
   const postForm = (form, name) => {
     const d = new FormData(form); d.set("form-name", name);
-    return fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(d).toString() });
+    return fetch(SITE.formsEndpoint, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(d).toString() });
   };
   const wireForm = (form, name, okText) => {
     const msg = $(".form-msg", form), go = $("button[type=submit]", form), label = go.textContent;

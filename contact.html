@@ -25,8 +25,7 @@
   <div class="wrap contact-grid">
     <div>
       <h2 id="contact-title" class="visually-hidden">Send us a message</h2>
-      <!-- Netlify Forms reads this form at deploy time; js/main.js submits it in place -->
-      <form id="contact-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="website" novalidate>
+      <form id="contact-form" name="contact" novalidate>
         <input type="hidden" name="form-name" value="contact">
         <div class="row">
           <div class="field"><label for="n">Name *</label><input id="n" name="name" required autocomplete="name"></div>
