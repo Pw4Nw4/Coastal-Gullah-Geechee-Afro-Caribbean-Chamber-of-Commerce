@@ -1,12 +1,10 @@
 // ============================================================
 //  SITE CONTENT — edit this file to update the whole site.
-//  Everything marked sample:true is PLACEHOLDER. While
-//  SAMPLE_DATA is true, dashed "Draft" notes show where content
-//  still needs replacing. Replace members/events/photos/leaders,
-//  then set SAMPLE_DATA = false to hide the notes and any
-//  sections that are still empty.
+//  Publish only chamber-confirmed content. Empty collections
+//  show useful contact paths or keep unfilled media sections hidden.
+//  SAMPLE_DATA is reserved for explicitly labeled internal drafts.
 // ============================================================
-const SAMPLE_DATA = true;
+const SAMPLE_DATA = false;
 
 const SITE = {
   name: "Coastal Gullah Geechee & Afro-Caribbean Chamber of Commerce",
@@ -15,12 +13,12 @@ const SITE = {
   phoneHref: "tel:+19124179591",
   email: "info@coastalgullahgeecheeafrocarribeanchamber.com", // confirm real address
   address: "1305 Barnard Street, PMB #40, Savannah, GA",
-  donate: "#", // paste your donation link here; "Donate" links stay hidden while this is "#"
+  donate: "https://www.zeffy.com/en-US/donation-form/support-the-coastal-gullah-geechee-and-afro-caribbean-chamber-of-commerce",
   checkoutEndpoint: "/api/checkout", // starts Stripe Checkout (server/checkout.js)
   formsEndpoint: "/api/forms", // saves signups, messages and chat questions (server/forms.js)
   // Social links set to "#" are hidden until a real URL is added
   social: [
-    { label: "Facebook", url: "#" },
+    { label: "Facebook", url: "https://www.facebook.com/profile.php?id=61590918141660" },
     { label: "Instagram", url: "https://instagram.com/gullahgeecheecaribbeanchamber" },
     { label: "LinkedIn", url: "#" },
     { label: "TikTok", url: "https://tiktok.com/@gullahgeecheecaribbeancc" },
@@ -31,25 +29,11 @@ const SITE = {
 const CATEGORIES = ["Food & Hospitality", "Arts & Crafts", "Professional Services", "Retail & Fashion", "Tours & Culture", "Health & Wellness", "Construction & Trades", "Education & Media"];
 const AREAS = ["Savannah", "Brunswick", "Darien / McIntosh", "Liberty County", "St. Simons / Sapelo", "Other Coastal GA"];
 
-// Member directory (all sample entries — replace with real members)
-const MEMBERS = [
-  { name: "Sweetgrass Basket Studio", cat: "Arts & Crafts", area: "Savannah", tags: ["Women-owned", "Gullah Geechee"], desc: "Handwoven sweetgrass baskets and weaving workshops rooted in generations of tradition.", url: "#", phone: "", sample: true },
-  { name: "Low Country Kitchen Collective", cat: "Food & Hospitality", area: "Savannah", tags: ["Minority-owned", "Afro-Caribbean"], desc: "Red rice, okra soup, and Caribbean-Gullah fusion catering for events of any size.", url: "#", phone: "", sample: true },
-  { name: "Haint Blue Tours", cat: "Tours & Culture", area: "Darien / McIntosh", tags: ["Gullah Geechee"], desc: "Guided heritage tours of historic Gullah Geechee communities and landmarks.", url: "#", phone: "", sample: true },
-  { name: "Indigo & Thread", cat: "Retail & Fashion", area: "Brunswick", tags: ["Women-owned"], desc: "Indigo-dyed apparel and home goods inspired by Lowcountry textile heritage.", url: "#", phone: "", sample: true },
-  { name: "Marsh Wellness Co.", cat: "Health & Wellness", area: "Liberty County", tags: ["Minority-owned", "Women-owned"], desc: "Herbal remedies, holistic wellness, and community health education.", url: "#", phone: "", sample: true },
-  { name: "Heritage Land & Title Advisors", cat: "Professional Services", area: "Savannah", tags: ["Minority-owned"], desc: "Heirs' property guidance, land preservation planning, and title clearing support.", url: "#", phone: "", sample: true },
-  { name: "Island Rhythm Media", cat: "Education & Media", area: "St. Simons / Sapelo", tags: ["Afro-Caribbean"], desc: "Photography, video, and storytelling for cultural events and small businesses.", url: "#", phone: "", sample: true },
-  { name: "Ancestral Builders", cat: "Construction & Trades", area: "Other Coastal GA", tags: ["Minority-owned"], desc: "Home restoration and new builds respecting traditional coastal architecture.", url: "#", phone: "", sample: true },
-];
+// Add chamber-confirmed member businesses here; no illustrative listings are published.
+const MEMBERS = [];
 
-// Events (sample dates — replace)
-const EVENTS = [
-  { m: "NOV", d: "08", title: "Business Incubator Info Session", type: "Workshop", where: "Savannah · Hybrid", desc: "Meet the team, learn about mentorship, certifications and the resource pipeline.", url: "contact.html", sample: true },
-  { m: "NOV", d: "22", title: "Heritage Makers Market", type: "Community", where: "Savannah", desc: "Artisans, food vendors and live music. Shop Gullah Geechee and Afro-Caribbean businesses.", url: "contact.html", sample: true },
-  { m: "DEC", d: "06", title: "Heirs' Property & Land Preservation Clinic", type: "Education", where: "Darien", desc: "Free sessions on protecting ancestral land, with attorneys and advocates on hand.", url: "contact.html", sample: true },
-  { m: "JAN", d: "17", title: "Annual Membership Mixer", type: "Networking", where: "Savannah", desc: "Connect with members, ambassadors and partners. Food, music and door prizes.", url: "contact.html", sample: true },
-];
+// Add confirmed dates and registration links when the chamber announces an event.
+const EVENTS = [];
 
 // Past event pictures. Put photos in /images/events and list them here, newest first:
 //   { src: "images/events/makers-market-1.jpg", cap: "Heritage Makers Market, November 2026" }
@@ -58,24 +42,20 @@ const GALLERY = [];
 
 // Videos. Paste a YouTube video ID (the part after v=). Videos without an id are skipped,
 // and the video sections stay hidden until at least one has an id.
-const VIDEOS = [
-  { id: "", title: "Chamber Highlights" },
-  { id: "", title: "Member Spotlight" },
-  { id: "", title: "What is Gullah Geechee?" },
-];
+const VIDEOS = [];
 
 // Gold and Platinum partners for the "Our partners" strip on the home page. Add each as
 //   { name: "Partner Name", logo: "images/partners/partner-name.png", url: "https://partner.example" }
 // logo and url are optional (the name shows without a logo). The strip stays hidden until one is listed.
 const PARTNERS = [];
 
-// Leadership & ambassadors (About page). Add a headshot path like "images/leaders/jane-doe.jpg"
-// as img, or leave img empty to show the person's initials. Sample entries only show while SAMPLE_DATA is true.
+// Leadership & ambassadors verified against the chamber's official leadership page.
+// Add an approved headshot path as img, or leave it empty to show the person's initials.
 const LEADERS = [
-  { name: "Leader name", role: "Founder & President", img: "", sample: true },
-  { name: "Leader name", role: "Vice President", img: "", sample: true },
-  { name: "Ambassador name", role: "Ambassador", img: "", sample: true },
-  { name: "Ambassador name", role: "Ambassador", img: "", sample: true },
+  { name: "Mahogany Bowers", role: "President", img: "" },
+  { name: "Dora Jenkins", role: "Vice Chairman", img: "" },
+  { name: "Jahva Walker", role: "Treasurer", img: "" },
+  { name: "Dr. Sally Ann Gray", role: "Chief Ambassador", img: "" },
 ];
 
 // Membership levels: names, groups and descriptions from the live site's membership page, prices (in dollars)

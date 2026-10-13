@@ -14,6 +14,16 @@
     ["about.html", "About"], ["events.html", "Programs & Events"], ["directory.html", "Member Directory"],
     ["resources.html", "Resources & Grants"], ["contact.html", "Contact"],
   ];
+  const ABOUT_NAV = [["about.html", "About the chamber"], ["about.html#leadership", "Leadership & ambassadors"], ["about.html#gullah", "What is Gullah Geechee?"]];
+  const currentPage = (href) => href === page ? ' aria-current="page"' : "";
+  const aboutCurrent = (href) => {
+    if (page !== "about.html") return "";
+    const hash = href.includes("#") ? href.slice(href.indexOf("#")) : "";
+    return hash === location.hash ? ` aria-current="${hash ? "location" : "page"}"` : "";
+  };
+  const navItem = ([href, text]) => href === "about.html"
+    ? `<li><details class="nav-about"><summary${page === "about.html" ? ' class="is-current"' : ""}>About</summary><ul class="nav-submenu">${ABOUT_NAV.map(([h, t]) => `<li><a href="${h}"${aboutCurrent(h)}>${esc(t)}</a></li>`).join("")}</ul></details></li>`
+    : `<li><a href="${href}"${currentPage(href)}>${esc(text)}</a></li>`;
   const donate = isSet(SITE.donate) ? `<a href="${esc(SITE.donate)}">Donate</a>` : "";
   const socials = SITE.social.filter((s) => isSet(s.url));
 
@@ -24,11 +34,11 @@
       <span class="utility-links"><a href="${SITE.phoneHref}">${esc(SITE.phone)}</a>${donate}</span>
     </div></div>
     <header class="site"><div class="wrap">
-      <a class="brand" href="index.html"><img src="images/emblem-200.webp" width="56" height="56" alt=""><span><b>Coastal Gullah Geechee</b><small>&amp; Afro-Caribbean Chamber of Commerce</small></span></a>
+      <a class="brand" href="index.html"${currentPage("index.html")}><img src="images/emblem-200.webp" width="56" height="56" alt=""><span><b>Coastal Gullah Geechee</b><small>&amp; Afro-Caribbean Chamber of Commerce</small></span></a>
       <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><span class="menu-icon" aria-hidden="true"></span><span class="menu-label">Menu</span></button>
       <nav class="main" id="nav" aria-label="Main"><ul>
-        ${NAV.map(([h, t]) => `<li><a href="${h}"${h === page ? ' aria-current="page"' : ""}>${esc(t)}</a></li>`).join("")}
-        <li class="nav-join"><a class="btn btn-gold" href="membership.html">Join the chamber</a></li>
+        ${NAV.map(navItem).join("")}
+        <li class="nav-join"><a class="btn btn-gold" href="membership.html"${currentPage("membership.html")}>Membership</a></li>
       </ul></nav>
     </div></header>`;
 
@@ -37,17 +47,31 @@
       <div class="foot-top">
         <div class="foot-brand"><img src="images/crest-256.webp" width="88" height="88" alt="" loading="lazy">
           <div><b>${esc(SITE.name)}</b><p>Educating, empowering and advocating for Gullah Geechee, Afro-Caribbean, minority-owned and women-owned businesses across the Georgia Coast and beyond.</p></div></div>
-        <div><h2 class="foot-h">Explore</h2><ul><li><a href="index.html">Home</a></li>${NAV.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("")}<li><a href="membership.html">Membership</a></li></ul></div>
+        <div><h2 class="foot-h">Explore</h2><ul><li><a href="index.html">Home</a></li>${NAV.map(([h, t]) => `<li><a href="${h}">${esc(t)}</a></li>`).join("")}<li><a href="membership.html">Membership</a></li><li><a href="about.html#leadership">Leadership &amp; ambassadors</a></li><li><a href="about.html#gullah">What is Gullah Geechee?</a></li></ul></div>
         <div><h2 class="foot-h">Visit</h2><ul><li>${esc(SITE.address)}</li><li>By appointment and at community events</li><li><a href="${SITE.phoneHref}">${esc(SITE.phone)}</a></li>${donate ? `<li>${donate}</li>` : ""}</ul></div>
         ${socials.length ? `<div><h2 class="foot-h">Follow</h2><ul>${socials.map((s) => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.label)}</a></li>`).join("")}</ul></div>` : ""}
       </div>
       <div class="legal"><span>© ${new Date().getFullYear()} ${esc(SITE.name)}</span><span class="motto-line">Build Business. Preserve Culture. Strengthen Legacy.</span></div>
     </div></footer>`;
 
-  const menuBtn = $(".menu-btn"), nav = $("#nav");
-  const setMenu = (open) => { nav.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", open); $(".menu-label", menuBtn).textContent = open ? "Close" : "Menu"; };
+  // Static homepage contact details share the same authoritative SITE data as the header/footer.
+  $$("a[data-site-phone]").forEach((a) => { a.href = SITE.phoneHref; a.textContent = SITE.phone; });
+  $$("[data-site-address]").forEach((el) => { el.textContent = SITE.address; });
+  $$("a[data-site-donate]").forEach((a) => { a.hidden = !isSet(SITE.donate); if (!a.hidden) a.href = SITE.donate; });
+
+  const menuBtn = $(".menu-btn"), nav = $("#nav"), aboutMenu = $(".nav-about");
+  const setMenu = (open) => { nav.classList.toggle("open", open); menuBtn.setAttribute("aria-expanded", open); $(".menu-label", menuBtn).textContent = open ? "Close" : "Menu"; if (!open) aboutMenu.open = false; };
   menuBtn.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && nav.classList.contains("open")) { setMenu(false); menuBtn.focus(); } });
+  nav.addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (aboutMenu.open) { aboutMenu.open = false; $("summary", aboutMenu).focus(); }
+    else if (nav.classList.contains("open")) { setMenu(false); menuBtn.focus(); }
+  });
+  document.addEventListener("click", (e) => { if (!aboutMenu.contains(e.target)) aboutMenu.open = false; });
+  window.addEventListener("hashchange", () => {
+    $$("a", aboutMenu).forEach((a) => { a.removeAttribute("aria-current"); if (aboutCurrent(a.getAttribute("href"))) a.setAttribute("aria-current", location.hash ? "location" : "page"); });
+  });
 
   // ---------- Renderers ----------
   const money = (n, cents = false) => "$" + n.toLocaleString("en-US", cents ? { minimumFractionDigits: 2 } : {});
@@ -69,12 +93,14 @@
       <a class="btn btn-outline" href="${esc(e.url)}">RSVP<span class="visually-hidden"> for ${esc(e.title)}</span></a></li>`;
 
   const homeEvents = $("#home-events");
-  if (homeEvents) homeEvents.innerHTML = EVENTS.slice(0, 3).map((e) => eventRow(e, false)).join("");
+  const eventsEmpty = `<li class="empty"><p>New programs and events will be announced here. Contact the chamber for upcoming opportunities to meet, learn and connect.</p><a class="btn btn-outline" href="contact.html">Ask about upcoming events</a></li>`;
+  if (homeEvents) homeEvents.innerHTML = EVENTS.length ? EVENTS.slice(0, 3).map((e) => eventRow(e, false)).join("") : eventsEmpty;
   const allEvents = $("#events-list");
-  if (allEvents) allEvents.innerHTML = EVENTS.map((e) => eventRow(e, true)).join("");
+  if (allEvents) allEvents.innerHTML = EVENTS.length ? EVENTS.map((e) => eventRow(e, true)).join("") : eventsEmpty;
 
   const homeDir = $("#home-dir");
-  if (homeDir) homeDir.innerHTML = MEMBERS.slice(0, 3).map(bizCard).join("");
+  const directoryEmpty = `<li class="empty"><p>Member listings are being prepared. Contact the chamber to find a business or ask about adding your member profile.</p><a class="btn btn-outline" href="contact.html">Connect with the chamber</a></li>`;
+  if (homeDir) homeDir.innerHTML = MEMBERS.length ? MEMBERS.slice(0, 3).map(bizCard).join("") : directoryEmpty;
 
   // Past event pictures with a native <dialog> viewer
   const gal = $("#gallery");
@@ -137,7 +163,9 @@
     const TAGS = ["Gullah Geechee", "Afro-Caribbean", "Minority-owned", "Women-owned"];
     const active = new Set();
     chips.insertAdjacentHTML("beforeend", TAGS.map((t) => `<button class="chip" type="button" aria-pressed="false" data-tag="${esc(t)}">${esc(t)}</button>`).join(""));
+    if (!MEMBERS.length) { const filters = $(".filters"); if (filters) filters.hidden = true; chips.hidden = true; $("#count").hidden = true; }
     const render = () => {
+      if (!MEMBERS.length) { grid.innerHTML = directoryEmpty; return; }
       const t = q.value.trim().toLowerCase();
       const res = MEMBERS.filter((m) => (!cat.value || m.cat === cat.value) && (!area.value || m.area === area.value)
         && [...active].every((a) => m.tags.includes(a)) && (!t || [m.name, m.desc, m.cat, m.area, ...m.tags].join(" ").toLowerCase().includes(t)));
@@ -250,13 +278,13 @@
     });
   };
 
-  // Email signup (email + zip): in the home hero and in a band above every footer
-  const signupForm = (id) => `
+  // Home asks for email only; the shared band also gathers a zip code.
+  const signupForm = (id, emailOnly = false) => `
     <form class="signup-form" id="${id}" novalidate>
-      <div class="signup-row">
+      <div class="signup-row${emailOnly ? " email-only" : ""}">
         <div class="field"><label for="${id}-email">Email</label><input id="${id}-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
-        <div class="field"><label for="${id}-zip">Zip code</label><input id="${id}-zip" name="zip" required inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" placeholder="31401"></div>
-        <button class="btn btn-gold" type="submit">Keep me in the loop</button>
+        ${emailOnly ? "" : `<div class="field"><label for="${id}-zip">Zip code</label><input id="${id}-zip" name="zip" required inputmode="numeric" autocomplete="postal-code" pattern="[0-9]{5}(-[0-9]{4})?" maxlength="10" placeholder="31401"></div>`}
+        <button class="btn btn-gold" type="submit">Join our email list</button>
       </div>
       <input type="hidden" name="page" value="${esc(page)}">
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -265,8 +293,8 @@
     </form>`;
   const SIGNUP_OK = "You're on the list! Watch your inbox for chamber news.";
   const heroSignup = $("#hero-signup");
-  if (heroSignup) { heroSignup.innerHTML = signupForm("hero-signup-form"); wireForm($("form", heroSignup), "newsletter", SIGNUP_OK); }
-  // The band above the footer, except on the welcome page and on home (which has the news bar near the top)
+  if (heroSignup) { heroSignup.innerHTML = signupForm("hero-signup-form", true); wireForm($("form", heroSignup), "newsletter", SIGNUP_OK); }
+  // The band above the footer, except on the welcome page and home, which has its own signup.
   if (page !== "membership-success.html" && !heroSignup) {
     const band = document.createElement("section");
     band.className = "signup"; band.id = "newsletter"; band.setAttribute("aria-labelledby", "newsletter-title");

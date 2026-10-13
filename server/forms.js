@@ -11,7 +11,7 @@ const clip = (v, n) => String(v ?? "").trim().slice(0, n);
 
 // Each form lists the fields it keeps (with a length cap) and what must be valid. Anything else posted is dropped.
 const FORMS = {
-  newsletter: { label: "New email signup", fields: { email: 200, zip: 10, page: 80 }, valid: (f) => EMAIL.test(f.email) && ZIP.test(f.zip) },
+  newsletter: { label: "New email signup", fields: { email: 200, zip: 10, page: 80 }, valid: (f) => EMAIL.test(f.email) && (!f.zip || ZIP.test(f.zip)) },
   contact: { label: "New message", fields: { name: 120, email: 200, topic: 80, message: 4000 }, valid: (f) => f.name && EMAIL.test(f.email) && f.message },
   question: { label: "Question the website assistant couldn't answer", fields: { question: 1000, email: 200, page: 80 }, valid: (f) => f.question && (!f.email || EMAIL.test(f.email)) },
 };

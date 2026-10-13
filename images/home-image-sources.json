@@ -1,0 +1,67 @@
+{
+  "source_page": "https://coastalgullahgeecheeafrocarribeanchamber.com/",
+  "retrieved_date": "2026-10-12",
+  "provenance_note": "Reused from the chamber's existing public website. Subjects are described visually; the record does not establish people's identities or verify that the pictured occasions are actual chamber events.",
+  "assets": [
+    {
+      "original": "i.png",
+      "filename": "home-community.webp",
+      "subject": "People networking at sunset beside coastal marsh and boats, with palms and string lights.",
+      "placement": "Homepage image-led hero.",
+      "object_position": "center center",
+      "crop_note": "Preserve the wide scene; overlay text toward the upper area if needed without covering faces.",
+      "published_transform_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/i.png/:/rs=w:1535,m",
+      "source_dimensions": [
+        1672,
+        941
+      ],
+      "output_dimensions": [
+        1600,
+        900
+      ],
+      "output_bytes": 211004,
+      "source_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/i.png",
+      "processing": "Full source composition retained. Resized and encoded as WebP; no content generation or cropping."
+    },
+    {
+      "original": "k.png",
+      "filename": "home-membership.webp",
+      "subject": "Five people in business and culturally expressive dress by a coastal house, with baskets and marsh scenery.",
+      "placement": "Homepage membership / what we do image-and-text section.",
+      "object_position": "center center",
+      "crop_note": "Keep the full group visible; wide landscape treatment is preferable to a square or portrait crop.",
+      "published_transform_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/k.png/:/cr=t:0%25,l:0%25,w:100%25,h:88.84%25",
+      "source_dimensions": [
+        1672,
+        941
+      ],
+      "output_dimensions": [
+        1400,
+        788
+      ],
+      "output_bytes": 169880,
+      "source_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/k.png",
+      "processing": "Full source composition retained. Resized and encoded as WebP; no content generation or cropping."
+    },
+    {
+      "original": "blob-a417bd1.png",
+      "filename": "home-businesses.webp",
+      "subject": "A community group gathered around a gold ribbon cutting on a porch.",
+      "placement": "Homepage who we serve / built for our community image-and-text section.",
+      "object_position": "center 42%",
+      "crop_note": "Use the original 4:3 composition, keeping the ribbon and people visible; avoid narrow crops that remove the group.",
+      "published_transform_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/blob-a417bd1.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25",
+      "source_dimensions": [
+        1448,
+        1086
+      ],
+      "output_dimensions": [
+        1200,
+        900
+      ],
+      "output_bytes": 137414,
+      "source_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/blob-a417bd1.png",
+      "processing": "Full source composition retained. Resized and encoded as WebP; no content generation or cropping."
+    }
+  ]
+}
