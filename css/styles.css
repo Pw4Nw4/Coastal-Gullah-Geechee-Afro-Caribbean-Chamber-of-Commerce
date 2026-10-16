@@ -226,6 +226,17 @@ nav.main .nav-join .btn { white-space: nowrap; }
 .chamber-pillars > .wrap > .more { margin-top: var(--space-7); }
 .chamber-story-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8); align-items: center; }
 .chamber-story-grid > img { width: 100%; height: auto; }
+/* The ribbon-cutting video in "Built for our community": a portrait clip that plays muted on a loop while on screen */
+.chamber-video { justify-self: center; width: min(100%, 22rem); margin: 0; }
+.chamber-video-frame { position: relative; }
+.chamber-video video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; border-radius: var(--radius-lg); background: var(--navy-950); box-shadow: var(--shadow-md); }
+.chamber-video-controls { position: absolute; right: var(--space-3); bottom: var(--space-3); display: flex; gap: var(--space-2); }
+.chamber-video-controls button { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 2px solid var(--white); border-radius: 50%; background: oklch(17% 0.055 276 / 0.72); color: var(--white); cursor: pointer; transition: background-color 0.2s var(--ease-quart); }
+.chamber-video-controls button:hover { background: var(--navy-800); }
+.chamber-video-controls svg { width: 1.25rem; height: 1.25rem; }
+.chamber-video .i-pause, .chamber-video .i-sound-on, .chamber-video.is-playing .i-play, .chamber-video.is-sound .i-sound-off { display: none; }
+.chamber-video.is-playing .i-pause, .chamber-video.is-sound .i-sound-on { display: block; }
+.chamber-video figcaption { margin-top: var(--space-3); font: 700 1.125rem/1.3 var(--font-display); color: var(--navy-800); }
 .chamber-story-copy h2 { margin-bottom: var(--space-5); }
 .chamber-story-copy .lead { font-size: 1.1875rem; }
 .chamber-story-copy .btn { margin-top: var(--space-3); }

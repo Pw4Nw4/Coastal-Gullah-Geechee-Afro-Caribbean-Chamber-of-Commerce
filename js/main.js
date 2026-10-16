@@ -169,6 +169,36 @@
     }
   }
 
+  // Ambient video (the home page's ribbon-cutting): plays muted on a loop while it's on screen, and pauses when it
+  // isn't. Visitors who ask for reduced motion or less data see the still frame instead. The buttons pause it (moving
+  // content needs a way to stop) and turn the sound on. Any pause except scrolling away (the button, media keys, the
+  // system's media controls) holds the video until the visitor plays it again.
+  $$("[data-ambient-video]").forEach((fig) => {
+    const video = $("video", fig), playBtn = $("[data-video-play]", fig), soundBtn = $("[data-video-sound]", fig);
+    let held = matchMedia("(prefers-reduced-motion: reduce)").matches || Boolean(navigator.connection?.saveData);
+    let offscreen = false;
+    const play = () => video.play().catch(() => {});
+    const sync = () => {
+      fig.classList.toggle("is-playing", !video.paused);
+      fig.classList.toggle("is-sound", !video.muted);
+      playBtn.setAttribute("aria-label", video.paused ? "Play the video" : "Pause the video");
+      soundBtn.setAttribute("aria-label", video.muted ? "Turn the sound on" : "Turn the sound off");
+    };
+    playBtn.addEventListener("click", () => (video.paused ? play() : video.pause()));
+    soundBtn.addEventListener("click", () => {
+      video.muted = !video.muted;
+      if (!video.muted && video.paused) play();
+    });
+    video.addEventListener("play", () => { held = false; });
+    video.addEventListener("pause", () => { if (!offscreen) held = true; offscreen = false; });
+    ["play", "pause", "volumechange"].forEach((type) => video.addEventListener(type, sync));
+    new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { if (!held && video.paused) play(); }
+      else if (!video.paused) { offscreen = true; video.pause(); }
+    }, { threshold: 0.4 }).observe(video);
+    sync();
+  });
+
   const leaders = $("#leaders");
   if (leaders) {
     const list = SAMPLE_DATA ? LEADERS : LEADERS.filter((l) => !l.sample);

@@ -49,8 +49,10 @@ const GALLERY = [];
 // the maker under the video for every kind. With a key, a page can also show one video by itself:
 // <div data-video="key"></div>. The video section stays hidden until there's at least one video.
 const VIDEOS = [
-  { key: "what-is-gullah-geechee", instagram: "DcBnmNQuZSC", title: "“What is Gullah Geechee?” Our grand opening", credit: "Regine Stepherson (@iamqueenreginee)" },
-  { key: "ribbon-cutting", instagram: "DbyTgOnAlem", title: "Our ribbon-cutting ceremony", credit: "Rinnie Renee (@rinsbeautybar_)" },
+  // Hosted here with Regine Stepherson's permission (her reel, Instagram DcBnmNQuZSC); the poster is its frame at 0:00.4
+  { key: "what-is-gullah-geechee", file: "videos/what-is-gullah-geechee.mp4", poster: "images/poster-what-is-gullah-geechee.webp", title: "“What is Gullah Geechee?” Our grand opening", credit: "Regine Stepherson (@iamqueenreginee)" },
+  // Hosted here with Rinnie Renee's permission (her reel, Instagram DbyTgOnAlem); also plays on the home page
+  { key: "ribbon-cutting", file: "videos/ribbon-cutting.mp4", poster: "images/home-ribbon-cutting.webp", title: "Our ribbon-cutting ceremony", credit: "Rinnie Renee (@rinsbeautybar_)" },
   // Hosted here with Dee Daniels Media's permission (their trailer for the episode, Instagram reel Da022G5NG8u). The
   // poster is its frame at 0:47.7; the About page gives it the frame at 0:23.6 instead (data-poster in about.html)
   { key: "why-we-started", file: "videos/made-of-savannah-podcast-trailer.mp4", poster: "images/poster-podcast-boil.webp", title: "Our story on the Made of Savannah Podcast", credit: "Dee Daniels Media (@deedanielsmedia)" },

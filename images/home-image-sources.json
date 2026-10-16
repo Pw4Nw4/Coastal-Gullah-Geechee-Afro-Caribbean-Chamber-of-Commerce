@@ -47,7 +47,7 @@
       "original": "blob-a417bd1.png",
       "filename": "home-businesses.webp",
       "subject": "A community group gathered around a gold ribbon cutting on a porch.",
-      "placement": "Homepage who we serve / built for our community image-and-text section.",
+      "placement": "Not currently used. It was the homepage built for our community image until the ribbon-cutting video replaced it (2026-10-16).",
       "object_position": "center 42%",
       "crop_note": "Use the original 4:3 composition, keeping the ribbon and people visible; avoid narrow crops that remove the group.",
       "published_transform_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/blob-a417bd1.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25",
@@ -62,6 +62,25 @@
       "output_bytes": 137414,
       "source_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/blob-a417bd1.png",
       "processing": "Full source composition retained. Resized and encoded as WebP; no content generation or cropping."
+    },
+    {
+      "original": "videos/ribbon-cutting.mp4, frame 14 (0.467 s)",
+      "filename": "home-ribbon-cutting.webp",
+      "source_page": "https://www.instagram.com/reel/DbyTgOnAlem/",
+      "retrieved_date": "2026-10-16",
+      "provenance_note": "Not from the original website: a still from Rinnie Renee's (@rinsbeautybar_) reel of the chamber's ribbon cutting, which the site hosts as videos/ribbon-cutting.mp4 and credits under the video.",
+      "subject": "A gold and teal ribbon being cut in front of a cheering crowd with raised hands, under the reel's title text \"Gullah Geechee & Afro-Caribbean Chamber of Commerce\".",
+      "placement": "Poster (cover) of the homepage ribbon-cutting video and of its card on the events page.",
+      "source_dimensions": [
+        720,
+        1280
+      ],
+      "output_dimensions": [
+        720,
+        1280
+      ],
+      "output_bytes": 125932,
+      "processing": "Frame chosen by the site's builder. Captured at full size from the hosted MP4 and encoded as WebP (quality 72); no content generation or cropping."
     }
   ]
 }
