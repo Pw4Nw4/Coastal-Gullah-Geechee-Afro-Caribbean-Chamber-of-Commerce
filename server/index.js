@@ -50,8 +50,9 @@ const json = (res, status, body) => {
   res.end(JSON.stringify(body));
 };
 
+// Never cached: a 404 for a file that a deploy is about to add would otherwise stick in Cloudflare and browsers
 const notFound = (res) => {
-  res.writeHead(404, { ...SECURITY, "Content-Type": "text/html; charset=utf-8" });
+  res.writeHead(404, { ...SECURITY, "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
   res.end(`<!doctype html><meta name="viewport" content="width=device-width, initial-scale=1"><title>Page not found</title>
 <body style="font:17px/1.6 system-ui,sans-serif;color:#13153a;max-width:34rem;margin:15vh auto;padding:0 1rem">
 <h1 style="font-family:Georgia,serif;color:#232856">We couldn't find that page.</h1>
@@ -63,7 +64,9 @@ const notFound = (res) => {
 async function serveStream(req, res, file, ext) {
   let size;
   try { size = (await fs.promises.stat(file)).size; } catch { return notFound(res); }
-  const headers = { ...SECURITY, "Content-Type": TYPES[ext], "Cache-Control": "public, max-age=86400", "Accept-Ranges": "bytes" };
+  // Coolify's proxy gzips every response by default, which drops Content-Length from video; Cloudflare then can't
+  // serve byte ranges from its cache. A declared encoding makes compressing proxies pass the file through untouched.
+  const headers = { ...SECURITY, "Content-Type": TYPES[ext], "Content-Encoding": "identity", "Cache-Control": "public, max-age=86400", "Accept-Ranges": "bytes" };
   const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
   let status = 200, start = 0, end = size - 1;
   if (m && (m[1] || m[2])) {
