@@ -125,21 +125,21 @@
   }
 
   // Videos: YouTube through its privacy-enhanced player, Instagram through its official embed (which credits the poster)
-  const videoCard = (v) => {
+  const videoCard = (v, solo) => {
     const caption = `<figcaption>${esc(v.title)}${v.credit ? `<span class="video-credit">Video by ${esc(v.credit)}</span>` : ""}</figcaption>`;
-    if (!v.instagram) return `<figure class="video-card"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.id)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>${caption}</figure>`;
+    if (!v.instagram) return `<figure class="video-card${solo ? " video-solo" : ""}"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.id)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>${caption}</figure>`;
     const link = `https://www.instagram.com/reel/${esc(v.instagram)}/`;
-    return `<figure class="video-card insta-card"><blockquote class="instagram-media" data-instgrm-permalink="${link}" data-instgrm-version="14"><a href="${link}" target="_blank" rel="noopener">Watch “${esc(v.title)}” on Instagram</a></blockquote>${caption}</figure>`;
+    return `<figure class="video-card insta-card${solo ? " video-solo" : ""}"><blockquote class="instagram-media" data-instgrm-permalink="${link}" data-instgrm-version="14"><a href="${link}" target="_blank" rel="noopener">Watch “${esc(v.title)}” on Instagram</a></blockquote>${caption}</figure>`;
   };
   const videos = VIDEOS.filter((v) => v.id || v.instagram);
   const vids = $("#videos");
   if (vids) {
     hideIfEmpty(vids, !videos.length);
-    vids.innerHTML = videos.map(videoCard).join("");
+    vids.innerHTML = videos.map((v) => videoCard(v)).join("");
   }
   $$("[data-video]").forEach((slot) => {
     const v = videos.find((x) => x.key === slot.dataset.video);
-    if (v) slot.outerHTML = videoCard(v);
+    if (v) slot.outerHTML = videoCard(v, true);
     else slot.remove();
   });
   // Instagram's script turns those links into players. It loads only when one is about to scroll into view.

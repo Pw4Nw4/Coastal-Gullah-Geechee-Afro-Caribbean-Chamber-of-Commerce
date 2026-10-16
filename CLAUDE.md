@@ -14,7 +14,7 @@ The mascot demo is the `mascot` launch configuration (Vite on port 5174; run `np
 
 The server only serves files matching its `PUBLIC` pattern (`*.html` at the root, `/css`, `/js`, `/images`). A new public folder or file type must be added there and to `TYPES`, or it 404s.
 
-Cloudflare and browsers cache CSS, JS and images, so the server stamps every `css/`, `js/` and `images/` URL in a page with `?v=<hash of those folders>` (`VERSION` in `server/index.js`, computed at startup) and caches requests carrying the current version for a year. Scripts that load files themselves reuse the stamp from their own URL (see `VERSION` in `chat.js`). Pushes to `main` deploy automatically: a GitHub webhook calls Coolify, which rebuilds the Docker image.
+Cloudflare and browsers cache CSS, JS and images, so the server stamps every `css/`, `js/` and `images/` URL in a page with `?v=<version of those folders>` (`assetVersion()` in `server/index.js`) and caches requests carrying the current version for a year. In production (`NODE_ENV=production`, set in the Dockerfile) the version is a content hash taken once at startup; in development it follows file edits, so a reload shows changes without restarting the server. Scripts that load files themselves reuse the stamp from their own URL (see `VERSION` in `chat.js`). Pushes to `main` deploy automatically: a GitHub webhook calls Coolify, which rebuilds the Docker image.
 
 ## Architecture
 

@@ -437,6 +437,7 @@ a.partner:hover { border-color: var(--teal-500); box-shadow: var(--shadow-sm); }
 /* Instagram reels play in Instagram's own player, which is tall. Its inline 326px minimum would overflow small phones;
    until it loads, the link holds the player's shape so the page doesn't jump. */
 .insta-card { width: 100%; max-width: 380px; }
+.video-solo { margin-block: var(--space-6); }
 .insta-card .instagram-media { width: 100% !important; min-width: 0 !important; margin: 0 !important; }
 .insta-card blockquote.instagram-media { display: grid; place-items: center; aspect-ratio: 9 / 14; padding: var(--space-5); border: 1px solid var(--line); border-radius: var(--radius); background: var(--teal-100); text-align: center; }
 .insta-card blockquote.instagram-media a { font-weight: 700; }

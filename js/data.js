@@ -49,6 +49,7 @@ const GALLERY = [];
 const VIDEOS = [
   { key: "what-is-gullah-geechee", instagram: "DcBnmNQuZSC", title: "“What is Gullah Geechee?” Our grand opening", credit: "Regine Stepherson (@iamqueenreginee)" },
   { key: "ribbon-cutting", instagram: "DbyTgOnAlem", title: "Our ribbon-cutting ceremony", credit: "Rinnie Renee (@rinsbeautybar_)" },
+  { key: "why-we-started", instagram: "Da022G5NG8u", title: "Our story on the Made of Savannah Podcast", credit: "Dee Daniels Media (@deedanielsmedia)" },
 ];
 
 // Gold and Platinum partners for the "Our partners" strip on the home page. Add each as

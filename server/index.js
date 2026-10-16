@@ -23,19 +23,20 @@ const TYPES = {
 const COMPRESS = new Set([".html", ".css", ".js", ".svg"]);
 
 // Cache busting. Pages are always served fresh, but Cloudflare and browsers keep CSS, JS and images for hours, so a
-// deploy could pair new pages with old styles and scripts. Every css/js/images URL in a page gets ?v=<hash of all
+// deploy could pair new pages with old styles and scripts. Every css/js/images URL in a page gets ?v=<version of all
 // of them>, so any change to an asset changes the URLs; requests carrying the current version are cached for a year.
-const VERSION = (() => {
-  const hash = crypto.createHash("sha1");
-  for (const dir of ["css", "js", "images"]) {
-    for (const name of fs.readdirSync(path.join(ROOT, dir)).sort()) {
-      const file = path.join(ROOT, dir, name);
-      if (fs.statSync(file).isFile()) hash.update(name).update(fs.readFileSync(file));
-    }
-  }
-  return hash.digest("hex").slice(0, 10);
-})();
-const versionUrls = (html) => html.replace(/((?:href|src)="(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)"/g, `$1?v=${VERSION}"`);
+// In production (a fresh container per deploy) the version is a content hash taken once. In development it follows
+// file edits, so a reload shows changes without restarting the server.
+const assetFiles = () => ["css", "js", "images"]
+  .flatMap((dir) => fs.readdirSync(path.join(ROOT, dir)).sort().map((name) => path.join(ROOT, dir, name)))
+  .filter((file) => fs.statSync(file).isFile());
+const digest = (parts) => parts.reduce((h, p) => h.update(p), crypto.createHash("sha1")).digest("hex").slice(0, 10);
+const PRODUCTION_VERSION = process.env.NODE_ENV === "production"
+  ? digest(assetFiles().flatMap((file) => [path.basename(file), fs.readFileSync(file)]))
+  : null;
+const assetVersion = () => PRODUCTION_VERSION
+  || digest(assetFiles().map((file) => { const s = fs.statSync(file); return `${path.basename(file)}:${s.size}:${s.mtimeMs}`; }));
+const versionUrls = (html, version) => html.replace(/((?:href|src)="(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)"/g, `$1?v=${version}"`);
 const SECURITY = {
   "X-Content-Type-Options": "nosniff", "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN",
   // NOINDEX=true while the site is only a preview, so search engines don't list its sample content
@@ -61,8 +62,9 @@ async function serveStatic(req, res, pathname, version) {
   let body;
   try { body = await fs.promises.readFile(path.join(ROOT, pathname)); } catch { return notFound(res); }
   const ext = path.extname(pathname);
-  if (ext === ".html") body = Buffer.from(versionUrls(body.toString("utf8")));
-  const cache = ext === ".html" ? "no-cache" : version === VERSION ? "public, max-age=31536000, immutable" : "public, max-age=3600";
+  const current = assetVersion();
+  if (ext === ".html") body = Buffer.from(versionUrls(body.toString("utf8"), current));
+  const cache = ext === ".html" ? "no-cache" : version === current ? "public, max-age=31536000, immutable" : "public, max-age=3600";
   const headers = { ...SECURITY, "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cache };
   if (COMPRESS.has(ext) && /\bgzip\b/.test(req.headers["accept-encoding"] || "")) {
     body = zlib.gzipSync(body);
@@ -154,5 +156,5 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => console.log(`Chamber site listening on port ${PORT} (assets version ${VERSION})`));
+server.listen(PORT, () => console.log(`Chamber site listening on port ${PORT} (assets version ${PRODUCTION_VERSION || "follows file edits"})`));
 process.on("SIGTERM", () => server.close(() => process.exit(0)));
