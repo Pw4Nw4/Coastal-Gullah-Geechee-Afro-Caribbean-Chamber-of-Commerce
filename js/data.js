@@ -40,9 +40,16 @@ const EVENTS = [];
 // The gallery sections stay hidden until at least one photo is listed.
 const GALLERY = [];
 
-// Videos. Paste a YouTube video ID (the part after v=). Videos without an id are skipped,
-// and the video sections stay hidden until at least one has an id.
-const VIDEOS = [];
+// Videos for "Watch and listen" on the events page. Either kind works:
+//   YouTube:   { id: "VIDEO_ID", title }                 (the part after v= in the link)
+//   Instagram: { instagram: "CODE", title, credit }      (the part after /reel/ in the link)
+// Instagram videos show through Instagram's own embed, so they stay credited to whoever posted them; credit names
+// them under the video too. With a key, a page can also show one video by itself: <div data-video="key"></div>.
+// The video section stays hidden until there's at least one video.
+const VIDEOS = [
+  { key: "what-is-gullah-geechee", instagram: "DcBnmNQuZSC", title: "“What is Gullah Geechee?” Our grand opening", credit: "Regine Stepherson (@iamqueenreginee)" },
+  { key: "ribbon-cutting", instagram: "DbyTgOnAlem", title: "Our ribbon-cutting ceremony", credit: "Rinnie Renee (@rinsbeautybar_)" },
+];
 
 // Gold and Platinum partners for the "Our partners" strip on the home page. Add each as
 //   { name: "Partner Name", logo: "images/partners/partner-name.png", url: "https://partner.example" }
