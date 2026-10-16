@@ -207,11 +207,18 @@ nav.main .nav-join .btn { white-space: nowrap; }
 /* Home keeps the original chamber's story order and published imagery. */
 .home-page .btn { border-radius: var(--radius-sm); }
 .chamber-hero { position: relative; padding: 0; background: var(--navy-950); color: var(--white); }
-.chamber-hero-image { width: 100%; height: clamp(34rem, 48vw, 46rem); object-fit: cover; object-position: center 45%; }
-.chamber-hero-content { position: absolute; inset: 0; display: flex; align-items: end; padding-block: var(--space-8); background: linear-gradient(180deg, oklch(17% 0.055 276 / 0.12), oklch(17% 0.055 276 / 0.76) 40%, oklch(17% 0.055 276 / 0.96) 100%); text-align: center; }
-.chamber-hero h1 { max-width: 25ch; margin: 0 auto var(--space-4); color: var(--white); font-size: clamp(2.5rem, 1.75rem + 2.3vw, 4.5rem); line-height: 1.08; }
+/* The hero photo is a crowd, so on wide screens the copy sits over its darkened lower part and the faces above stay
+   clear. Narrower screens, where the copy would reach the faces, show it beneath the photo instead. On short screens
+   the hero stops about 5rem below the fold, which keeps the headline on the first screen. */
+.chamber-hero-image { width: 100%; height: clamp(36rem, 60vw, 50rem); height: clamp(36rem, min(60vw, 100svh + 5rem), 50rem); object-fit: cover; object-position: center 30%; }
+.chamber-hero-content { position: absolute; inset: 0; display: flex; align-items: end; padding-block: var(--space-8); background: linear-gradient(180deg, transparent 40%, oklch(17% 0.055 276 / 0.55) 52%, oklch(17% 0.055 276 / 0.86) 66%, oklch(17% 0.055 276 / 0.96) 100%); text-align: center; }
+.chamber-hero h1 { max-width: 34ch; margin: 0 auto var(--space-4); color: var(--white); font-size: clamp(2.5rem, 1.75rem + 2.3vw, 4.5rem); line-height: 1.08; text-shadow: 0 2px 24px oklch(17% 0.055 276 / 0.5); }
 .chamber-hero h1 em { color: var(--gold-300); }
 .chamber-hero p { max-width: 58ch; margin: 0 auto var(--space-5); color: var(--white); font-size: var(--text-lead); line-height: 1.5; }
+@media (max-width: 1199px) {
+  .chamber-hero-image { height: clamp(18rem, 50vw, 40rem); height: clamp(18rem, min(50vw, 100svh - 24rem), 40rem); }
+  .chamber-hero-content { position: static; padding-block: var(--space-6) var(--space-7); background: var(--navy-800); }
+}
 .chamber-introduction { background: var(--gold-100); text-align: center; }
 .chamber-introduction h2 { margin-bottom: var(--space-6); }
 .chamber-introduction h3 { margin-bottom: var(--space-3); color: var(--sepia-700); font-size: 1.5rem; }
@@ -278,8 +285,7 @@ nav.main .nav-submenu { position: absolute; top: calc(100% + var(--space-2)); le
   .chamber-story-grid > img { max-height: 32rem; object-fit: cover; }
 }
 @media (max-width: 600px) {
-  .chamber-hero-image { height: auto; aspect-ratio: 16 / 10; object-position: center; }
-  .chamber-hero-content { position: static; padding-block: var(--space-6) var(--space-7); background: var(--navy-800); }
+  .chamber-hero-image { height: auto; aspect-ratio: 16 / 10; }
   .chamber-hero h1 { font-size: clamp(2.125rem, 1.5rem + 3vw, 2.625rem); }
   .chamber-hero p { font-size: 1.125rem; }
   .chamber-introduction h2 { margin-bottom: var(--space-5); }
@@ -506,6 +512,11 @@ section[data-empty] { display: none; }
 .crest-figure { justify-self: center; width: min(100%, 440px); margin: 0; text-align: center; }
 .crest-figure img { width: 100%; border-radius: 50%; clip-path: circle(48.6%); }
 .crest-figure figcaption { margin-top: var(--space-4); font: 700 1.125rem/1.35 var(--font-display); color: var(--sepia-700); }
+/* A leader's own words, set large in the display face (About's "Why we started") */
+.pull-quote { margin: 0 0 var(--space-6); }
+.pull-quote blockquote { margin: 0; }
+.pull-quote blockquote p { max-width: 28ch; margin: 0; font: 800 clamp(1.625rem, 1.2rem + 1.4vw, 2.25rem)/1.15 var(--font-display); color: var(--sepia-700); text-wrap: balance; }
+.pull-quote figcaption { margin-top: var(--space-3); color: var(--muted); }
 .gullah { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: start; }
 .gullah .lead { color: var(--sepia-700); font-family: var(--font-display); font-weight: 800; }
 .seen-in { padding: var(--space-5); border-radius: var(--radius-lg); background: var(--white); }

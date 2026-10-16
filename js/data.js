@@ -35,8 +35,8 @@ const MEMBERS = [];
 // Add confirmed dates and registration links when the chamber announces an event.
 const EVENTS = [];
 
-// Past event pictures. Put photos in /images/events and list them here, newest first:
-//   { src: "images/events/makers-market-1.jpg", cap: "Heritage Makers Market, November 2026" }
+// Past event pictures. Put photos in /images itself (subfolders aren't served) and list them here, newest first:
+//   { src: "images/event-makers-market-1.jpg", cap: "Heritage Makers Market, November 2026" }
 // The gallery sections stay hidden until at least one photo is listed.
 const GALLERY = [];
 
@@ -59,7 +59,7 @@ const VIDEOS = [
 ];
 
 // Gold and Platinum partners for the "Our partners" strip on the home page. Add each as
-//   { name: "Partner Name", logo: "images/partners/partner-name.png", url: "https://partner.example" }
+//   { name: "Partner Name", logo: "images/partner-name.png", url: "https://partner.example" }
 // logo and url are optional (the name shows without a logo). The strip stays hidden until one is listed.
 const PARTNERS = [];
 

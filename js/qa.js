@@ -39,6 +39,7 @@ const FALLBACK = {
 const SYSTEM_PROMPT = `You are the Chamber Assistant for the Coastal Gullah Geechee & Afro-Caribbean Chamber of Commerce (Savannah, GA).
 Mission: educate, empower, and advocate for Gullah Geechee, Afro-Caribbean, minority-owned, and women-owned businesses on the Georgia Coast and beyond. Tagline: Culture at the center, commerce as the pathway forward. Motto: Build Business. Preserve Culture. Strengthen Legacy.
 Tone: warm, respectful, plain language, short answers. Treat Gullah Geechee and Afro-Caribbean culture with care and accuracy.
+Voice: speak the way the chamber speaks about itself. It began with president Mahogany Bowers's thought "I'm Gullah Geechee, and I don't see me." Gullah is the culture and Geechee is the people. The chamber is for something, not against anything, and brings people together, with hard work and kindness for all.
 Answer ONLY from the Q&A below. If the answer is not there, or is marked as unconfirmed, say you don't know, do not invent names, dates, prices, deadlines, or grant details, and offer to send the question to the team (phone 912-417-9591, appointment-based office at 1305 Barnard Street, PMB #40, Savannah, GA).
 Never give legal, tax, or financial advice; point people to the team or a professional.
 Never collect payment details or passwords in chat. For text-message marketing, only sign people up with clear opt-in consent.`;
@@ -50,8 +51,8 @@ const QA = [
     a: "We're the Coastal Gullah Geechee & Afro-Caribbean Chamber of Commerce. We educate, empower, and advocate for Gullah Geechee, Afro-Caribbean, minority-owned, and women-owned businesses across the Georgia Coast and beyond. Culture is our foundation and commerce is the pathway forward.",
     link: ["Our story", "about.html"] },
   { id: "why-started", topic: "About",
-    q: ["why was the chamber started", "why did you start", "why do you exist", "history", "our story", "how did the chamber begin"],
-    a: "The chamber started because our communities didn't have representation. We are different, and we wanted a space where Gullah Geechee and Afro-Caribbean entrepreneurs and the culture itself are seen, represented, and supported.",
+    q: ["why was the chamber started", "why did you start", "why do you exist", "history", "our story", "how did the chamber begin", "what inspired the chamber", "inspiration", "who started the chamber", "how did it start"],
+    a: "It began with a thought our president, Mahogany Bowers, couldn't shake: “I'm Gullah Geechee, and I don't see me.” She saw Gullah Geechee food on Savannah menus called “a Southern tradition,” when, as she says, shrimp and grits “was created by Gullah Geechee people.” The chamber is here so the people who created this culture are seen, credited and able to build businesses on it. It wasn't started to be against anything, but to be for something and to bring people together.",
     link: ["About us", "about.html"] },
   { id: "pillars", topic: "About",
     q: ["what are your programs", "what are the pillars", "what services do you offer", "what do you offer", "focus areas"],
@@ -131,7 +132,7 @@ const QA = [
   // ---------- Culture & education (review before launch) ----------
   { id: "gullah", topic: "Culture",
     q: ["what is gullah geechee", "who are the gullah geechee", "gullah geechee meaning", "what does gullah geechee mean", "gullah"],
-    a: "The Gullah Geechee are descendants of enslaved West and Central Africans who lived and labored on the coastal plantations of the Carolinas, Georgia, and Florida. Their relative isolation on the Sea Islands and coast let them preserve a distinctive language, foodways, music, crafts, and spiritual traditions, seen in sweetgrass baskets, indigo and haint-blue traditions, rice cultivation, storytelling, and the Gullah language.",
+    a: "Gullah is the culture, and Geechee is the people. Gullah is shrimp and grits, red rice, sweetgrass baskets, storytelling, dance and the praise houses still alive today. Geechee is the people who carry it: descendants of West and Central Africans who were enslaved on the coastal plantations of the Carolinas, Georgia, and Florida, and who kept their language, foodways, music, crafts, and spiritual traditions alive.",
     link: ["Learn more", "about.html#gullah"] },
   { id: "corridor", topic: "Culture",
     q: ["gullah geechee cultural heritage corridor", "heritage corridor", "national heritage area"],
@@ -149,6 +150,10 @@ const QA = [
     q: ["sweetgrass baskets", "what are sweetgrass baskets", "basket weaving"],
     a: "Sweetgrass baskets are coiled baskets handwoven from sweetgrass, a craft passed down through generations of Gullah Geechee artisans. Members who make baskets can be featured in our directory.",
     link: ["Browse artisans", "directory.html"] },
+  { id: "foodways", topic: "Culture",
+    q: ["shrimp and grits", "is shrimp and grits gullah", "where does shrimp and grits come from", "gullah food", "gullah geechee food", "red rice", "lowcountry food"],
+    a: "Shrimp and grits and red rice are Gullah Geechee food, even when menus call them simply Southern. As our president, Mahogany Bowers, puts it: “When it comes to shrimp and grits, that was created by Gullah Geechee people. And those people are my people.” Seeing that credit go missing is part of why the chamber started.",
+    link: ["Why we started", "about.html"] },
   { id: "afro-caribbean", topic: "Culture", review: true,
     q: ["what is afro caribbean", "afro caribbean connection", "africans and caribbeans", "caribbean heritage", "why caribbean"],
     a: "Gullah Geechee, African, and Afro-Caribbean communities share deep roots in the Atlantic African diaspora. The chamber brings these communities together to support businesses and celebrate shared and distinct traditions. (Detailed story coming soon.)",
@@ -231,15 +236,15 @@ const PAGE_TIPS = (() => {
       { text: "Get chamber news by email: events, grant leads and member spotlights. It's free.", ask: news },
     ],
     "about.html": [
-      { text: "Our communities built businesses on this coast for generations, often without a seat at the table. The chamber was started to change that.", ask: "Why was the chamber started?" },
-      { text: "The Gullah Geechee kept their language, foodways, music and craft alive along the Southern coast for generations.", ask: "What is Gullah Geechee?" },
+      { text: "The chamber began with one thought: “I'm Gullah Geechee, and I don't see me.”", ask: "Why was the chamber started?" },
+      { text: "Gullah is the culture. Geechee is the people.", ask: "What is Gullah Geechee?" },
       { text: "See the pale blue around the site? It's haint blue, the color painted on Lowcountry porch ceilings.", ask: "What is haint blue?" },
       { text: "I'm the Sankofa bird from our seal. Sankofa means “go back and get it”: learn from the past to build the future.", ask: "What is Sankofa?" },
       { text: "There's a place for everyone here: join, volunteer, sponsor or partner with us.", ask: ["How can I help?", "How can I support the chamber?"] },
     ],
     "events.html": [
       next && { text: `Next on the calendar: ${next.title}, ${date(next)} (${next.where}).`, link: ["See the details", "#upcoming-title"] },
-      { text: "We host workshops, markets, clinics, mixers and celebrations up and down the coast.", ask: "What events are coming up?" },
+      { text: "We come together to connect, rejoice and celebrate, and to remember who we are and where we come from.", ask: "What events are coming up?" },
       { text: "Have an idea for an event? We partner with artists and makers, schools, churches and local businesses.", ask: "Can I host an event?" },
       { text: "Looking for the next gathering? Our team can help with current dates and registration details.", ask: "How do I RSVP?" },
       { text: "Never miss one: the newsletter brings new events, grant leads and member news to your inbox.", ask: news },
@@ -248,7 +253,7 @@ const PAGE_TIPS = (() => {
       typeof MEMBERS !== "undefined" && MEMBERS.length && { text: "Every listing here is a chamber member: a neighbor, an artisan, a keeper of tradition.", link: ["Search the directory", "#q"] },
       typeof MEMBERS !== "undefined" && MEMBERS.length && { text: "Shopping with purpose? Filter by Gullah Geechee, Afro-Caribbean, minority-owned or women-owned.", link: ["Filter by ownership", "#chips"] },
       { text: "Own a business? Members get a profile here with photos, links and ownership badges.", ask: "How do I get listed?" },
-      { text: "Listings are a member benefit. Ask me which levels include one.", ask: "Is the directory free?" },
+      { text: "Shrimp and grits is Gullah Geechee food, even when the menu just says Southern.", ask: "Is shrimp and grits Gullah?" },
       { text: "Sweetgrass baskets are handwoven by Gullah Geechee artisans, a craft passed down for generations.", ask: "What are sweetgrass baskets?" },
     ],
     "resources.html": [

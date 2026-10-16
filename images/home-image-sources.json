@@ -7,7 +7,7 @@
       "original": "i.png",
       "filename": "home-community.webp",
       "subject": "People networking at sunset beside coastal marsh and boats, with palms and string lights.",
-      "placement": "Homepage image-led hero.",
+      "placement": "Not currently used. It was the homepage hero until the group photo replaced it (2026-10-16).",
       "object_position": "center center",
       "crop_note": "Preserve the wide scene; overlay text toward the upper area if needed without covering faces.",
       "published_transform_url": "https://img1.wsimg.com/isteam/ip/dd18cb08-f37c-4a47-bdb2-4c8b0e792ff4/i.png/:/rs=w:1535,m",
@@ -81,6 +81,26 @@
       ],
       "output_bytes": 125932,
       "processing": "Frame chosen by the site's builder. Captured at full size from the hosted MP4 and encoded as WebP (quality 72); no content generation or cropping."
+    },
+    {
+      "original": "Photo supplied in chat (1672x941 WebP); a copy is kept in source-images/home-group-from-chat.webp",
+      "filename": "home-group.webp",
+      "retrieved_date": "2026-10-16",
+      "provenance_note": "Not from the original website: supplied in chat by the site's developer for the homepage hero. Subjects are described visually and not identified.",
+      "subject": "About twenty people in colorful dresses and African prints smiling and waving together beside the chamber's banner, in a shop with shelves of jars.",
+      "placement": "Homepage hero.",
+      "object_position": "center 30%",
+      "crop_note": "Faces sit about 21-40% down the photo. From 1200px up the hero copy overlays only the darkened lower part; below that it sits beneath the photo.",
+      "source_dimensions": [
+        1672,
+        941
+      ],
+      "output_dimensions": [
+        1570,
+        941
+      ],
+      "output_bytes": 183594,
+      "processing": "Right 102px cropped to remove a bystander's hand and phone at the edge; encoded as WebP (quality 80); no upscaling or content generation."
     }
   ]
 }
