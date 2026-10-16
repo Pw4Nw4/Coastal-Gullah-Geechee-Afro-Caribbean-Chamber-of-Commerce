@@ -232,7 +232,8 @@ nav.main .nav-join .btn { white-space: nowrap; }
 .chamber-pillar-list p { margin: 0; color: var(--on-dark); }
 .chamber-pillars > .wrap > .more { margin-top: var(--space-7); }
 .chamber-story-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8); align-items: center; }
-.chamber-story-grid > img { width: 100%; height: auto; }
+/* "Build business…" has no image: the motto stands beside the copy */
+.chamber-story-title { margin: 0; font-size: clamp(2.25rem, 1.6rem + 2.2vw, 3.5rem); }
 /* The ribbon-cutting video in "Built for our community": a portrait clip that plays muted on a loop while on screen */
 .chamber-video { justify-self: center; width: min(100%, 22rem); margin: 0; }
 .chamber-video-frame { position: relative; }
@@ -282,7 +283,6 @@ nav.main .nav-submenu { position: absolute; top: calc(100% + var(--space-2)); le
 @media (max-width: 860px) {
   .chamber-story-grid, .chamber-contact-grid, .chamber-newsletter-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
   .chamber-story-copy { max-width: 68ch; }
-  .chamber-story-grid > img { max-height: 32rem; object-fit: cover; }
 }
 @media (max-width: 600px) {
   .chamber-hero-image { height: auto; aspect-ratio: 16 / 10; }
@@ -290,7 +290,6 @@ nav.main .nav-submenu { position: absolute; top: calc(100% + var(--space-2)); le
   .chamber-hero p { font-size: 1.125rem; }
   .chamber-introduction h2 { margin-bottom: var(--space-5); }
   .chamber-pillar-list { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
-  .chamber-story-grid > img { max-height: none; object-fit: contain; }
 }
 @container (max-width: 420px) {
   .signup-row.email-only { grid-template-columns: minmax(0, 1fr); }
