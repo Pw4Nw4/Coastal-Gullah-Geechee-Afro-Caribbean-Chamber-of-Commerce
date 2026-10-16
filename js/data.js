@@ -43,15 +43,17 @@ const GALLERY = [];
 // Videos for "Watch and listen" on the events page. Three kinds:
 //   YouTube:   { id: "VIDEO_ID", title }                 (the part after v= in the link)
 //   Instagram: { instagram: "CODE", title, credit }      (the part after /reel/ in the link)
-//   Our file:  { file: "videos/name.mp4", title, credit } (an MP4 in /videos; only with the owner's permission)
+//   Our file:  { file: "videos/name.mp4", poster, title, credit } (an MP4 in /videos, only with the owner's permission;
+//              poster is an optional cover image, otherwise the first frame shows)
 // Instagram videos show through Instagram's own embed, so they stay credited to whoever posted them; credit names
 // the maker under the video for every kind. With a key, a page can also show one video by itself:
 // <div data-video="key"></div>. The video section stays hidden until there's at least one video.
 const VIDEOS = [
   { key: "what-is-gullah-geechee", instagram: "DcBnmNQuZSC", title: "“What is Gullah Geechee?” Our grand opening", credit: "Regine Stepherson (@iamqueenreginee)" },
   { key: "ribbon-cutting", instagram: "DbyTgOnAlem", title: "Our ribbon-cutting ceremony", credit: "Rinnie Renee (@rinsbeautybar_)" },
-  // Hosted here with Dee Daniels Media's permission (their trailer for the episode, Instagram reel Da022G5NG8u)
-  { key: "why-we-started", file: "videos/made-of-savannah-podcast-trailer.mp4", title: "Our story on the Made of Savannah Podcast", credit: "Dee Daniels Media (@deedanielsmedia)" },
+  // Hosted here with Dee Daniels Media's permission (their trailer for the episode, Instagram reel Da022G5NG8u). The
+  // poster is its frame at 0:47.7; the About page gives it the frame at 0:23.6 instead (data-poster in about.html)
+  { key: "why-we-started", file: "videos/made-of-savannah-podcast-trailer.mp4", poster: "images/poster-podcast-boil.webp", title: "Our story on the Made of Savannah Podcast", credit: "Dee Daniels Media (@deedanielsmedia)" },
 ];
 
 // Gold and Platinum partners for the "Our partners" strip on the home page. Add each as
@@ -60,12 +62,13 @@ const VIDEOS = [
 const PARTNERS = [];
 
 // Leadership & ambassadors verified against the chamber's official leadership page.
-// Add an approved headshot path as img, or leave it empty to show the person's initials.
+// Add an approved headshot path as img, or leave it empty to show the person's initials. The current headshots are
+// square crops of the photos published with each name on that page (originals in source-images/leaders).
 const LEADERS = [
-  { name: "Mahogany Bowers", role: "President", img: "" },
-  { name: "Dora Jenkins", role: "Vice Chairman", img: "" },
-  { name: "Jahva Walker", role: "Treasurer", img: "" },
-  { name: "Dr. Sally Ann Gray", role: "Chief Ambassador", img: "" },
+  { name: "Mahogany Bowers", role: "President", img: "images/leader-mahogany-bowers.webp" },
+  { name: "Dora Jenkins", role: "Vice Chairman", img: "images/leader-dora-jenkins.webp" },
+  { name: "Jahva Walker", role: "Treasurer", img: "images/leader-jahva-walker.webp" },
+  { name: "Dr. Sally Ann Gray", role: "Chief Ambassador", img: "images/leader-sally-ann-gray.webp" },
 ];
 
 // Membership levels: names, groups and descriptions from the live site's membership page, prices (in dollars)

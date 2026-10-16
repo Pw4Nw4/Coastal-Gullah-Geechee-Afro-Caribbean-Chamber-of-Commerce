@@ -5,6 +5,10 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const page = location.pathname.split("/").pop() || "index.html";
   const isSet = (url) => Boolean(url) && url !== "#";
+  // The server stamps this script's URL with the site's asset version (?v=...); our own files named in data.js reuse it
+  // (URLs from a page's HTML already carry the stamp)
+  const VERSION = document.currentScript ? new URL(document.currentScript.src).search : "";
+  const asset = (url) => (/^(?:css|js|images)\/[^?]*$/.test(url) ? url + VERSION : url);
 
   // Draft mode shows the dashed "Draft" notes and keeps empty sections visible (see .is-draft in styles.css)
   if (SAMPLE_DATA) document.documentElement.classList.add("is-draft");
@@ -128,7 +132,7 @@
   // our own MP4s in a plain player (#t=0.1 makes iPhones show the first frame instead of a blank box)
   const videoCard = (v, solo) => {
     const caption = `<figcaption>${esc(v.title)}${v.credit ? `<span class="video-credit">Video by ${esc(v.credit)}</span>` : ""}</figcaption>`;
-    if (v.file) return `<figure class="video-card file-card${solo ? " video-solo" : ""}"><video src="${esc(v.file)}#t=0.1" controls playsinline preload="metadata" aria-label="${esc(v.title)}"></video>${caption}</figure>`;
+    if (v.file) return `<figure class="video-card file-card${solo ? " video-solo" : ""}"><video src="${esc(v.file)}${v.poster ? "" : "#t=0.1"}"${v.poster ? ` poster="${esc(asset(v.poster))}"` : ""} controls playsinline preload="metadata" aria-label="${esc(v.title)}"></video>${caption}</figure>`;
     if (!v.instagram) return `<figure class="video-card${solo ? " video-solo" : ""}"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.id)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>${caption}</figure>`;
     const link = `https://www.instagram.com/reel/${esc(v.instagram)}/`;
     return `<figure class="video-card insta-card${solo ? " video-solo" : ""}"><blockquote class="instagram-media" data-instgrm-permalink="${link}" data-instgrm-version="14"><a href="${link}" target="_blank" rel="noopener">Watch “${esc(v.title)}” on Instagram</a></blockquote>${caption}</figure>`;
@@ -139,9 +143,10 @@
     hideIfEmpty(vids, !videos.length);
     vids.innerHTML = videos.map((v) => videoCard(v)).join("");
   }
+  // A slot can give its video a cover of its own with data-poster
   $$("[data-video]").forEach((slot) => {
     const v = videos.find((x) => x.key === slot.dataset.video);
-    if (v) slot.outerHTML = videoCard(v, true);
+    if (v) slot.outerHTML = videoCard(slot.dataset.poster ? { ...v, poster: slot.dataset.poster } : v, true);
     else slot.remove();
   });
   // Instagram's script turns those links into players. It loads only when one is about to scroll into view.
@@ -169,7 +174,7 @@
     const list = SAMPLE_DATA ? LEADERS : LEADERS.filter((l) => !l.sample);
     hideIfEmpty(leaders, !list.length);
     leaders.innerHTML = list.map((l, i) => {
-      const face = l.img ? `<img class="avatar" src="${esc(l.img)}" alt="" loading="lazy">`
+      const face = l.img ? `<img class="avatar" src="${esc(asset(l.img))}" alt="" loading="lazy">`
         : l.sample ? `<div class="avatar avatar-pending" aria-hidden="true"><img src="images/emblem-200.webp" alt=""></div>`
         : monogram(l.name, i, "avatar");
       return `<li class="leader">${face}<h3>${esc(l.name)}</h3><p>${esc(l.role)}</p></li>`;

@@ -511,6 +511,11 @@ section[data-empty] { display: none; }
 .avatar { display: grid; place-items: center; width: 9rem; aspect-ratio: 1; margin: 0 auto var(--space-4); overflow: hidden; border-radius: 50%; background: var(--mono-bg, var(--haint-100)); color: var(--mono-fg, var(--navy-800)); font: 800 2.5rem/1 var(--font-display); object-fit: cover; }
 .avatar-pending { background: var(--white); box-shadow: inset 0 0 0 2px var(--line); }
 .avatar-pending img { width: 62%; opacity: 0.5; mix-blend-mode: multiply; }
+/* The leaders in two columns beside the group photo; the photo moves below them on narrow screens */
+.leadership { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(2rem, 1rem + 4vw, 5rem); align-items: center; }
+.leadership .leaders { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.leadership-photo { display: block; width: 100%; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+@media (max-width: 860px) { .leadership { grid-template-columns: minmax(0, 1fr); } .leadership-photo { justify-self: center; max-width: 34rem; } }
 
 /* ---------- Motto band ---------- */
 .motto { text-align: center; }

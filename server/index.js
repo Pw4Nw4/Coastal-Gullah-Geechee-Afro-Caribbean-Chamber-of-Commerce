@@ -25,8 +25,9 @@ const STREAM = new Set([".mp4"]);
 const COMPRESS = new Set([".html", ".css", ".js", ".svg"]);
 
 // Cache busting. Pages are always served fresh, but Cloudflare and browsers keep CSS, JS and images for hours, so a
-// deploy could pair new pages with old styles and scripts. Every css/js/images URL in a page gets ?v=<version of all
-// of them>, so any change to an asset changes the URLs; requests carrying the current version are cached for a year.
+// deploy could pair new pages with old styles and scripts. Every css/js/images URL in a page (in href, src and poster
+// attributes, data-poster included) gets ?v=<version of all of them>, so any change to an asset changes the URLs;
+// requests carrying the current version are cached for a year.
 // In production (a fresh container per deploy) the version is a content hash taken once. In development it follows
 // file edits, so a reload shows changes without restarting the server.
 const assetFiles = () => ["css", "js", "images"]
@@ -38,7 +39,7 @@ const PRODUCTION_VERSION = process.env.NODE_ENV === "production"
   : null;
 const assetVersion = () => PRODUCTION_VERSION
   || digest(assetFiles().map((file) => { const s = fs.statSync(file); return `${path.basename(file)}:${s.size}:${s.mtimeMs}`; }));
-const versionUrls = (html, version) => html.replace(/((?:href|src)="(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)"/g, `$1?v=${version}"`);
+const versionUrls = (html, version) => html.replace(/((?:href|src|poster)="(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)"/g, `$1?v=${version}"`);
 const SECURITY = {
   "X-Content-Type-Options": "nosniff", "Referrer-Policy": "strict-origin-when-cross-origin", "X-Frame-Options": "SAMEORIGIN",
   // NOINDEX=true while the site is only a preview, so search engines don't list its sample content
