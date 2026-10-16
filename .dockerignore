@@ -6,6 +6,8 @@ data
 node_modules
 # The mascot's React source; the site serves the prebuilt js/sankofa-mascot.js
 mascot
+# Social media images kept for review (git-ignored too)
+source-images
 *.md
 Dockerfile
 .dockerignore

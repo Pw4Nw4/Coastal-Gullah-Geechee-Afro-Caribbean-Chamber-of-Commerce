@@ -13,6 +13,9 @@ node_modules/
 # The mascot demo's production build (the site's js/sankofa-mascot.js IS committed: the site has no build step)
 mascot/dist/
 
+# Images gathered from the chamber's social media for review; only the chosen ones become web images in images/
+source-images/
+
 # OS files
 .DS_Store
 Thumbs.db

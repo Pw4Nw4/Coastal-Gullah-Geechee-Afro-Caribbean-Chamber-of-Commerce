@@ -1,5 +1,5 @@
 // Serves the chamber website and its API (Node 20+, no dependencies). Built for Coolify but runs anywhere.
-//   GET  /, *.html, /css/*, /js/*, /images/*   the site (nothing else in the repo is ever served)
+//   GET  /, *.html, /css/*, /js/*, /images/*, /videos/*   the site (nothing else in the repo is ever served)
 //   POST /api/checkout                         start a Stripe Checkout session for a membership
 //   POST /api/forms                            save an email signup, contact message or chat question
 //   GET  /admin/submissions.csv[?form=...]     download saved submissions (Basic auth, password = ADMIN_TOKEN)
@@ -15,11 +15,13 @@ const { saveSubmission, submissionsCsv } = require("./forms");
 
 const ROOT = path.join(__dirname, "..");
 const PORT = Number(process.argv.find((a) => a.startsWith("--port="))?.slice(7) || process.env.PORT || 3000);
-const PUBLIC = /^\/(?:[\w-]+\.html|(?:css|js|images)\/[\w-]+(?:\.[\w-]+)+)$/;
+const PUBLIC = /^\/(?:[\w-]+\.html|(?:css|js|images|videos)\/[\w-]+(?:\.[\w-]+)+)$/;
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
   ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".ico": "image/x-icon",
+  ".mp4": "video/mp4",
 };
+const STREAM = new Set([".mp4"]);
 const COMPRESS = new Set([".html", ".css", ".js", ".svg"]);
 
 // Cache busting. Pages are always served fresh, but Cloudflare and browsers keep CSS, JS and images for hours, so a
@@ -56,9 +58,33 @@ const notFound = (res) => {
 <p>It may have moved. Start from the <a href="/" style="color:#007081">home page</a> or call 912-417-9591.</p></body>`);
 };
 
+// Video is streamed from disk with byte-range support: Safari and iPhones won't play video without it, and seeking
+// needs it everywhere. One range per request (what browsers ask for); anything else gets the whole file.
+async function serveStream(req, res, file, ext) {
+  let size;
+  try { size = (await fs.promises.stat(file)).size; } catch { return notFound(res); }
+  const headers = { ...SECURITY, "Content-Type": TYPES[ext], "Cache-Control": "public, max-age=86400", "Accept-Ranges": "bytes" };
+  const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
+  let status = 200, start = 0, end = size - 1;
+  if (m && (m[1] || m[2])) {
+    start = m[1] ? Number(m[1]) : Math.max(0, size - Number(m[2])); // "bytes=-N" is the last N bytes
+    end = m[1] && m[2] ? Math.min(Number(m[2]), size - 1) : size - 1;
+    if (start > end) {
+      res.writeHead(416, { ...SECURITY, "Content-Range": `bytes */${size}` });
+      return res.end();
+    }
+    status = 206;
+    headers["Content-Range"] = `bytes ${start}-${end}/${size}`;
+  }
+  res.writeHead(status, { ...headers, "Content-Length": end - start + 1 });
+  if (req.method === "HEAD") return res.end();
+  fs.createReadStream(file, { start, end }).on("error", () => res.destroy()).pipe(res);
+}
+
 async function serveStatic(req, res, pathname, version) {
   if (pathname === "/") pathname = "/index.html";
   if (!PUBLIC.test(pathname)) return notFound(res);
+  if (STREAM.has(path.extname(pathname))) return serveStream(req, res, path.join(ROOT, pathname), path.extname(pathname));
   let body;
   try { body = await fs.promises.readFile(path.join(ROOT, pathname)); } catch { return notFound(res); }
   const ext = path.extname(pathname);

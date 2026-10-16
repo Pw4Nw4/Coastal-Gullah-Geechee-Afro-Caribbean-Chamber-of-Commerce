@@ -124,14 +124,16 @@
     }
   }
 
-  // Videos: YouTube through its privacy-enhanced player, Instagram through its official embed (which credits the poster)
+  // Videos: YouTube through its privacy-enhanced player, Instagram through its official embed (which credits the poster),
+  // our own MP4s in a plain player (#t=0.1 makes iPhones show the first frame instead of a blank box)
   const videoCard = (v, solo) => {
     const caption = `<figcaption>${esc(v.title)}${v.credit ? `<span class="video-credit">Video by ${esc(v.credit)}</span>` : ""}</figcaption>`;
+    if (v.file) return `<figure class="video-card file-card${solo ? " video-solo" : ""}"><video src="${esc(v.file)}#t=0.1" controls playsinline preload="metadata" aria-label="${esc(v.title)}"></video>${caption}</figure>`;
     if (!v.instagram) return `<figure class="video-card${solo ? " video-solo" : ""}"><div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${esc(v.id)}" title="${esc(v.title)}" loading="lazy" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe></div>${caption}</figure>`;
     const link = `https://www.instagram.com/reel/${esc(v.instagram)}/`;
     return `<figure class="video-card insta-card${solo ? " video-solo" : ""}"><blockquote class="instagram-media" data-instgrm-permalink="${link}" data-instgrm-version="14"><a href="${link}" target="_blank" rel="noopener">Watch “${esc(v.title)}” on Instagram</a></blockquote>${caption}</figure>`;
   };
-  const videos = VIDEOS.filter((v) => v.id || v.instagram);
+  const videos = VIDEOS.filter((v) => v.id || v.instagram || v.file);
   const vids = $("#videos");
   if (vids) {
     hideIfEmpty(vids, !videos.length);
