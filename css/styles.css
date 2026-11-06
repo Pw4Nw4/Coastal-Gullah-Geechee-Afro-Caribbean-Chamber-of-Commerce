@@ -250,6 +250,11 @@ nav.main .nav-join .btn { white-space: nowrap; }
 .chamber-story-copy .btn { margin-top: var(--space-3); }
 .chamber-story-copy .more { display: flex; width: fit-content; margin-top: var(--space-4); min-height: 2.75rem; }
 .chamber-contact { background: var(--white); }
+/* News cards reuse the .resource card; two or three of them share the row */
+.chamber-news { background: var(--gold-100); }
+.chamber-news h2 { margin-bottom: var(--space-6); }
+.news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--space-5); }
+.resource .news-date { margin-bottom: var(--space-1); font-size: var(--text-sm); }
 .chamber-contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-8); align-items: start; }
 .chamber-contact-copy .lead { font-size: 1.1875rem; color: var(--sepia-700); }
 .chamber-contact-details { margin: var(--space-6) 0; }

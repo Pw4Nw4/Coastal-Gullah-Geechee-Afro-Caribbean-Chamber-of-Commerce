@@ -18,15 +18,16 @@
     ["about.html", "About"], ["events.html", "Programs & Events"], ["directory.html", "Member Directory"],
     ["resources.html", "Resources & Grants"], ["contact.html", "Contact"],
   ];
-  const ABOUT_NAV = [["about.html", "About the chamber"], ["about.html#leadership", "Leadership & ambassadors"], ["about.html#gullah", "What is Gullah Geechee?"]];
+  const ABOUT_NAV = [["about.html", "About the chamber"], ["about.html#leadership", "Leadership & ambassadors"], ["about.html#gullah", "What is Gullah Geechee?"], ["advocacy.html", "Advocacy"]];
   const currentPage = (href) => href === page ? ' aria-current="page"' : "";
   const aboutCurrent = (href) => {
+    if (href === page) return ' aria-current="page"';
     if (page !== "about.html") return "";
     const hash = href.includes("#") ? href.slice(href.indexOf("#")) : "";
     return hash === location.hash ? ` aria-current="${hash ? "location" : "page"}"` : "";
   };
   const navItem = ([href, text]) => href === "about.html"
-    ? `<li><details class="nav-about"><summary${page === "about.html" ? ' class="is-current"' : ""}>About</summary><ul class="nav-submenu">${ABOUT_NAV.map(([h, t]) => `<li><a href="${h}"${aboutCurrent(h)}>${esc(t)}</a></li>`).join("")}</ul></details></li>`
+    ? `<li><details class="nav-about"><summary${page === "about.html" || page === "advocacy.html" ? ' class="is-current"' : ""}>About</summary><ul class="nav-submenu">${ABOUT_NAV.map(([h, t]) => `<li><a href="${h}"${aboutCurrent(h)}>${esc(t)}</a></li>`).join("")}</ul></details></li>`
     : `<li><a href="${href}"${currentPage(href)}>${esc(text)}</a></li>`;
   const donate = isSet(SITE.donate) ? `<a href="${esc(SITE.donate)}">Donate</a>` : "";
   const socials = SITE.social.filter((s) => isSet(s.url));
@@ -101,6 +102,12 @@
   if (homeEvents) homeEvents.innerHTML = EVENTS.length ? EVENTS.slice(0, 3).map((e) => eventRow(e, false)).join("") : eventsEmpty;
   const allEvents = $("#events-list");
   if (allEvents) allEvents.innerHTML = EVENTS.length ? EVENTS.map((e) => eventRow(e, true)).join("") : eventsEmpty;
+
+  const newsList = $("#news-list");
+  if (newsList) {
+    hideIfEmpty(newsList, !NEWS.length);
+    newsList.innerHTML = NEWS.slice(0, 3).map((n) => `<article class="resource"><span class="tag">${esc(n.tag)}</span><h3>${esc(n.title)}</h3><p class="news-date">${esc(n.date)}</p><p>${esc(n.text)}</p>${n.link ? `<a class="more" href="${esc(n.link[1])}">${esc(n.link[0])}</a>` : ""}</article>`).join("");
+  }
 
   const homeDir = $("#home-dir");
   const directoryEmpty = `<li class="empty"><p>Member listings are being prepared. Contact the chamber to find a business or ask about adding your member profile.</p><a class="btn btn-outline" href="contact.html">Connect with the chamber</a></li>`;

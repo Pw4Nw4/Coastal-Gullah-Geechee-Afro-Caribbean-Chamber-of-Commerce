@@ -35,6 +35,14 @@ const MEMBERS = [];
 // Add confirmed dates and registration links when the chamber announces an event.
 const EVENTS = [];
 
+// Chamber news for the home page's "News from the chamber" section, newest first (the latest three show).
+//   { date: "August 2026", tag: "Celebration", title, text, link: ["Watch the video", "events.html"] }
+// link is optional. The section stays hidden until at least one item is listed.
+const NEWS = [
+  { date: "August 2026", tag: "Celebration", title: "We cut the ribbon", text: "Our community gathered for the chamber's ribbon cutting, with speeches, dancing and a crowd of supporters. Watch the celebration, recorded by Rinnie Renee.", link: ["Watch the video", "events.html#watch-title"] },
+  { date: "July 16, 2026", tag: "In the media", title: "Our story on the Made of Savannah Podcast", text: "President Mahogany Bowers shared the inspiration behind the chamber: “I'm Gullah Geechee, and I don't see me.”", link: ["Watch the trailer", "about.html#why-title"] },
+];
+
 // Past event pictures. Put photos in /images itself (subfolders aren't served) and list them here, newest first:
 //   { src: "images/event-makers-market-1.jpg", cap: "Heritage Makers Market, November 2026" }
 // The gallery sections stay hidden until at least one photo is listed.
