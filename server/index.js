@@ -2,9 +2,10 @@
 //   GET  /, *.html, /css/*, /js/*, /images/*, /videos/*   the site (nothing else in the repo is ever served)
 //   POST /api/checkout                         start a Stripe Checkout session for a membership
 //   POST /api/forms                            save an email signup, contact message or chat question
+//   POST /api/stripe-webhook                   Stripe tells us a membership was paid; saved as a `member` submission
 //   GET  /admin/submissions.csv[?form=...]     download saved submissions (Basic auth, password = ADMIN_TOKEN)
 //   GET  /healthz                              health check
-// Environment: PORT, SITE_URL, STRIPE_SECRET_KEY, ADMIN_TOKEN, FORMS_WEBHOOK_URL, DATA_DIR, NOINDEX (see .env.example).
+// Environment: PORT, SITE_URL, STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, ADMIN_TOKEN, FORMS_WEBHOOK_URL, DATA_DIR, NOINDEX (see .env.example).
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -12,6 +13,7 @@ const zlib = require("node:zlib");
 const crypto = require("node:crypto");
 const { createCheckout } = require("./checkout");
 const { saveSubmission, submissionsCsv } = require("./forms");
+const { handleStripeWebhook } = require("./stripe-webhook");
 
 const ROOT = path.join(__dirname, "..");
 const PORT = Number(process.argv.find((a) => a.startsWith("--port="))?.slice(7) || process.env.PORT || 3000);
@@ -151,6 +153,13 @@ const server = http.createServer(async (req, res) => {
     const pathname = decodeURIComponent(url.pathname);
 
     if (pathname === "/healthz") { res.writeHead(200, { "Content-Type": "text/plain" }); return res.end("ok"); }
+
+    // Stripe's server calls this, so it isn't rate-limited per visitor; the signature is what keeps strangers out.
+    if (pathname === "/api/stripe-webhook") {
+      if (req.method !== "POST") return json(res, 405, { error: "Method not allowed." });
+      const [status, body] = await handleStripeWebhook(await readBody(req, 256 * 1024), req.headers["stripe-signature"]);
+      return json(res, status, body);
+    }
 
     if (pathname === "/api/checkout" || pathname === "/api/forms") {
       if (req.method !== "POST") return json(res, 405, { error: "Method not allowed." });

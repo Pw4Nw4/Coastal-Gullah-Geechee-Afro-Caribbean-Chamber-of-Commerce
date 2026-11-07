@@ -1,4 +1,4 @@
-// Saves form submissions (email signups, contact messages and the chat assistant's unanswered questions) as one
+// Saves form submissions (email signups, contact messages, the chat assistant's unanswered questions and paid members) as one
 // JSON line each on the data volume, optionally forwards each to a webhook, and exports them as CSV for staff.
 const fs = require("node:fs");
 const path = require("node:path");
@@ -24,18 +24,31 @@ async function saveSubmission(input) {
   const fields = Object.fromEntries(Object.entries(form.fields).map(([k, max]) => [k, clip(input[k], max)]));
   if (!form.valid(fields)) return [400, { error: "Please check the form and try again." }];
 
+  await store(name, form.label, fields);
+  return [200, { ok: true }];
+}
+
+// Appends one entry to the submissions file and forwards it to FORMS_WEBHOOK_URL. Paid members (server/stripe-webhook.js)
+// are stored the same way as the form entries, so one CSV holds everything.
+async function store(name, label, fields) {
   const entry = { at: new Date().toISOString(), form: name, ...fields };
   await fs.promises.mkdir(DATA_DIR, { recursive: true });
   await fs.promises.appendFile(FILE, JSON.stringify(entry) + "\n");
-  notify(form.label, entry);
-  return [200, { ok: true }];
+  notify(label, entry);
+}
+
+// True if an entry with this field value is already saved (Stripe retries events, so a payment must be stored once).
+async function hasEntry(field, value) {
+  let raw = "";
+  try { raw = await fs.promises.readFile(FILE, "utf8"); } catch {}
+  return raw.split("\n").some((line) => { try { return line && JSON.parse(line)[field] === value; } catch { return false; } });
 }
 
 // Posts each submission to FORMS_WEBHOOK_URL if set. "text" suits Slack and n8n, "content" suits Discord.
 function notify(label, entry) {
   const url = process.env.FORMS_WEBHOOK_URL;
   if (!url) return;
-  const details = Object.entries(entry).filter(([k, v]) => v && k !== "at" && k !== "form").map(([k, v]) => `${k}: ${v}`);
+  const details = Object.entries(entry).filter(([k, v]) => v && !["at", "form", "session", "payment"].includes(k)).map(([k, v]) => `${k}: ${v}`);
   const text = [label, ...details].join("\n");
   fetch(url, {
     method: "POST",
@@ -55,9 +68,10 @@ async function submissionsCsv(only) {
   const rows = raw.split("\n").filter(Boolean)
     .map((line) => { try { return JSON.parse(line); } catch { return null; } })
     .filter((r) => r && (!only || r.form === only));
-  const cols = ["at", "form", "name", "email", "zip", "topic", "message", "question", "page"];
+  const cols = ["at", "form", "name", "email", "zip", "topic", "message", "question", "page",
+    "business", "phone", "category", "tier", "amount", "about", "newsletter", "sms", "session", "payment"];
   const cell = (v) => { let s = String(v ?? ""); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return `"${s.replace(/"/g, '""')}"`; };
   return [cols.join(","), ...rows.map((r) => cols.map((c) => cell(r[c])).join(","))].join("\r\n") + "\r\n";
 }
 
-module.exports = { saveSubmission, submissionsCsv };
+module.exports = { saveSubmission, submissionsCsv, store, hasEntry };
